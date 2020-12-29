@@ -1,6 +1,12 @@
 import type { Nullable, WHATEVER } from "./types.d.ts";
 
 /**
+ * Cette fonction permet de bloquer l'event loop pendant une certaine durée.
+ * @param {number} ms durée en milliseconde
+ */
+export const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+/**
  * Transforme une simple fonction en fonction d'ordre supérieur.
  */
 export function higherOrderFunction(
