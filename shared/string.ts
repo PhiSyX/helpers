@@ -14,6 +14,16 @@ export function toString($$1: WHATEVER): string {
   return $$1;
 }
 
+export function _lwr<Type$$1>($$1: Type$$1): string {
+  const algo = (str: string) => str.toLowerCase();
+  return algo(toString($$1));
+}
+
+export function _upr<Type$$1>($$1: Type$$1): string {
+  const algo = (str: string) => str.toUpperCase();
+  return algo(toString($$1));
+}
+
 /**
  * Retourne une chaîne de caractère avec les caractères échappés (entités HTML).
  *
