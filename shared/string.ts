@@ -24,6 +24,24 @@ export function _upr<Type$$1>($$1: Type$$1): string {
   return algo(toString($$1));
 }
 
+export function capitalize($$1: string): string {
+  interface AlgoParams {
+    lower: typeof _lwr;
+    upper: typeof _upr;
+  }
+
+  const algo = ({ lower, upper }: AlgoParams) => {
+    return (str: string) => upper(str[0]) + lower(str.slice(1));
+  };
+
+  const SEPARATOR = /([\s-_]+)/;
+
+  return toString($$1)
+    .split(SEPARATOR)
+    .map(algo({ lower: _lwr, upper: _upr }))
+    .join("");
+}
+
 /**
  * Retourne une chaîne de caractère avec les caractères échappés (entités HTML).
  *

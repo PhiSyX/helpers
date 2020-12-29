@@ -1,6 +1,22 @@
 import { assertEquals } from "https://deno.land/std@0.82.0/testing/asserts.ts";
 
-import { userFriendlyNumber } from "./string.ts";
+import { capitalize, userFriendlyNumber } from "./string.ts";
+
+Deno.test(
+  "[shared/string/capitalize]: base",
+  () => {
+    const expectedCapitalize = "Je Fais Un Test";
+
+    const text = "je fais un test";
+    assertEquals(capitalize(text), expectedCapitalize);
+
+    const text2 = "JE FAIS UN TEST";
+    assertEquals(capitalize(text2), expectedCapitalize);
+
+    const text3 = "je fAiS Un TEST";
+    assertEquals(capitalize(text3), expectedCapitalize);
+  },
+);
 
 Deno.test(
   "[shared/string/userFriendlyNumber]: base",
