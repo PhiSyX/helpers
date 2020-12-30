@@ -1,5 +1,8 @@
 # Mes utilitaires pour JavaScript (écrit en TypeScript).
 
+- [Documentation / API](#documentationapi)
+- [Guide de style](#styleguide)
+
 ## Répertoires :
   - **shared/**: est un dossier contenant des sources "partagées", qui pourront tant bien être utilisées pour **node**, **deno** ou le **web** ;
 
@@ -379,3 +382,43 @@ Répertoire [web/](./web)
     - constante `isIOS`: boolean;
 
     - constante `isMobile`: boolean;
+
+# STYLEGUIDE
+## Le JS pour ce projet :
+  - N'utiliser que "`let`" ou "`const`" au lieu de "`var`".
+
+  - Les **noms des constantes** avec des valeurs **statiques** doivent être en **MAJUSCULE**, *sinon* en *minuscule*.
+    > Exemple:
+    > ```js
+    > const VARIABLE = "value"; // est ce que j'appelle une valeur statique.
+    > const VARIABLE_2 = 1; // est ce que j'appelle une valeur statique.
+    > const users = arr.map(() => ({ foo: "bar" })); // est ce que j'appelle une valeur qui n'est pas "statique".
+    > ```
+
+  - Les noms des variables doivent suivre cette nomenclature: `snake_case` ou `camelCase`.
+    - normal:
+      > ```js
+      > const VARIABLE = "value";
+      > let variable = 1;
+      > ```
+
+    - `snake_case`:
+      > ```js
+      > const variable_name = () => "foo";
+      > let variable_ame    = () => "bar";
+      > ```
+
+    - `camelCase`:
+      > ```js
+      > const variableName = () => "foo";
+      > let variableName   = () => "bar";
+      > ```
+
+  - Les noms des classes doivent suivre cette nomenclature: `PascalCase`.
+    > ```js
+    > class Entity {}
+    > class UserEntity extends Entity {}
+    > ```
+
+## Le TS pour ce projet :
+  - Ne pas utiliser le type "`any`". Mieux vaut utiliser plutôt "`WHATEVER`", "`FIXME`" ou "`TODO`".
