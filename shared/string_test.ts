@@ -1,6 +1,42 @@
 import { assertEquals } from "https://deno.land/std@0.82.0/testing/asserts.ts";
 
-import { capitalize, userFriendlyNumber } from "./string.ts";
+import { capitalize, toString, userFriendlyNumber } from "./string.ts";
+
+Deno.test(
+  "[shared/string/toString]: base",
+  () => {
+    assertEquals(toString(1), "1");
+    assertEquals(toString({ foo: "bar" }), '{"foo":"bar"}');
+    assertEquals(toString("foobar"), "foobar");
+    assertEquals(toString(null), "null");
+    assertEquals(toString(undefined), "undefined");
+  },
+);
+
+Deno.test(
+  "[shared/string/toString]: function",
+  () => {
+    console.log("###################");
+
+    assertEquals(
+      toString(function test() {
+        console.log("ok");
+      }),
+      `function test() {\n        console.log("ok");\n    }`,
+    );
+
+    console.log("######### END ###################");
+
+    assertEquals(
+      toString(
+        class {
+          foo = "bar";
+        },
+      ),
+      'class {\n        constructor() {\n            this.foo = "bar";\n        }\n    }',
+    );
+  },
+);
 
 Deno.test(
   "[shared/string/capitalize]: base",

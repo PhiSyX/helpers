@@ -1,11 +1,15 @@
 import type { OBJECT, WHATEVER } from "./types.d.ts";
 
+import { isNil } from "./lang.ts";
+
 export const EMPTY_STRING = "";
 
 export function toString($$1: WHATEVER): string {
   if (typeof $$1 !== "string") {
     try {
-      return JSON.stringify($$1);
+      let transform = JSON.stringify($$1);
+      if (isNil(transform)) throw new EvalError();
+      return transform;
     } catch { // ? $$1 = function() {}
       return String($$1);
     }
@@ -24,7 +28,7 @@ export function _upr<Type$$1>($$1: Type$$1): string {
   return algo(toString($$1));
 }
 
-export function capitalize($$1: string): string {
+export function capitalize<Type$$1>($$1: Type$$1): string {
   interface AlgoParams {
     lower: typeof _lwr;
     upper: typeof _upr;
