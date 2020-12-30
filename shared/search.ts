@@ -37,7 +37,7 @@ const pushToResult = higherOrderFunction((
 /**
  *  Simple fuzzy search.
  */
-export function fuzzysearch(
+export function fuzzySearch(
   needle: string,
   haystack: string,
 ): FuzzySearchRecord[] {
@@ -75,7 +75,7 @@ export function fuzzysearch(
 /**
  * @see https://fr.wikipedia.org/wiki/Algorithme_de_Boyer-Moore-Horspool
  */
-export function searchByMoore(
+export function mooreSearch(
   needle: string,
   haystack: string,
 ): number {

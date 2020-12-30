@@ -1,13 +1,13 @@
 import { assertEquals } from "https://deno.land/std@0.82.0/testing/asserts.ts";
 
-import { fuzzysearch } from "./search.ts";
+import { fuzzySearch } from "./search.ts";
 
 Deno.test(
-  "[shared/search/fuzzysearch]: base",
+  "[shared/search/fuzzySearch]: base",
   () => {
     const word = "PhiSyX";
     const filter = "s";
-    const result = fuzzysearch(filter, word);
+    const result = fuzzySearch(filter, word);
     assertEquals(result, [
       { type: "TEXT", word: "Phi" },
       { type: "HIT", word: "S" },
@@ -16,7 +16,7 @@ Deno.test(
 
     const word2 = "Pseudo[absente]";
     const filter2 = "s[e]";
-    const result2 = fuzzysearch(filter2, word2);
+    const result2 = fuzzySearch(filter2, word2);
     assertEquals(result2, [
       { type: "TEXT", word: "P" },
       { type: "HIT", word: "s" },
@@ -30,7 +30,7 @@ Deno.test(
 
     const word3 = "Pseudo[absente]";
     const filter3 = "M";
-    const result3 = fuzzysearch(filter3, word3);
+    const result3 = fuzzySearch(filter3, word3);
     assertEquals(result3, []);
   },
 );
