@@ -1,35 +1,3 @@
-/**
- * @function reactivity(raw)
- * @function watcher(watch)
- *
- * @example ```js
- *    const state = reactivity({
- *      foo: "bar",
- *      bar: "foo",
- *    });
- *
- *    watcher(() => {
- *      console.log("La propriété foo de l'état state a changé", state.foo);
- *    })
- *
- *    watcher(() => {
- *      console.log("La propriété bar de l'état state a changé", state.bar);
- *    })
- *
- *    watcher(() => {
- *      const $el = document.querySelector("...");
- *      *patch($el, state); // ? exemple: met à jour les données d'un élément
- *    });
- *
- *    ...
- *    ...
- *    ...
- *
- *    state.foo = "bla";
- *    state.bar = "foobar";
- * ```
- */
-
 import type { FIXME, Nullable, OBJECT } from "./types.d.ts";
 
 let activeWatch: Nullable<() => void>;
