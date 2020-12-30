@@ -36,14 +36,6 @@ export const __TEST__: boolean = env("NODE_ENV") === "test" || (
  * @param {*string} $default Valeur par défaut (au cas où).
  * @return {string|null} =>
  *  Valeur d'une variable d'environnement si elle existe sinon, une valeur par défaut.
- *
- * @example ```js
- * env('NODE_ENV') // 'test'
- * env('UNKNOWN_VARIABLE') // null
- * env('UNKNOWN_VARIABLE', 'FOUND_VARIABLE') // 'a value'
- * env('UNKNOWN_VARIABLE', 'NOT_FOUND_VARIABLE') // 'NOT_FOUND_VARIABLE'
- * env('UNKNOWN_VARIABLE', 'Salut à toi') // 'Salut à toi'
- * ```
  */
 export function env(key: string, $default?: string): Nullable<string> {
   // @ts-ignore
