@@ -16,16 +16,12 @@ Deno.test(
 Deno.test(
   "[shared/string/toString]: function",
   () => {
-    console.log("###################");
-
     assertEquals(
       toString(function test() {
         console.log("ok");
       }),
       `function test() {\n        console.log("ok");\n    }`,
     );
-
-    console.log("######### END ###################");
 
     assertEquals(
       toString(
