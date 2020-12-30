@@ -1,6 +1,6 @@
 import { assertEquals } from "https://deno.land/std@0.82.0/testing/asserts.ts";
 
-import { firstEntry, lastEntry } from "./array.ts";
+import { firstEntry, lastEntry, randomEntry } from "./array.ts";
 
 Deno.test(
   "[shared/array/firstEntry]: comportement de base",
@@ -61,5 +61,12 @@ Deno.test(
     const [value2, index2] = lastEntry(myArray3);
     assertEquals(value2, 0);
     assertEquals(index2, 7);
+  },
+);
+
+Deno.test(
+  "[shared/array/randomEntry]: vide",
+  () => {
+    assertEquals(randomEntry([]), [null, null]);
   },
 );

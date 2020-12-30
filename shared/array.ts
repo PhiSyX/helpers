@@ -1,6 +1,6 @@
 import type { WHATEVER } from "./types.d.ts";
 
-import { isNil } from "./lang.ts";
+import { isNil, isUndefined } from "./lang.ts";
 
 type ArrayRecordIndex = number;
 type ArrayRecordEntry<T> = T;
@@ -11,9 +11,10 @@ type ArrayRecord<T> = [ArrayRecordEntry<T>, ArrayRecordIndex];
  */
 export function randomEntry<ArrayType = WHATEVER>(
   arr: ArrayType[] = [],
-): ArrayRecord<ArrayType> {
+): ArrayRecord<ArrayType> | [null, null] {
   const index = Math.floor(Math.random() * arr.length);
-  return [arr[index], index];
+  const entry = arr[index];
+  return !isUndefined(entry) ? [entry, index] : [null, null];
 }
 
 /**
@@ -35,6 +36,5 @@ export function lastEntry<ArrayType = WHATEVER>(
 ): ArrayRecord<ArrayType> | [null, null] {
   const index = arr.length - 1;
   const entry = arr[index];
-
   return !isNil(entry) ? [entry, index] : [null, null];
 }
