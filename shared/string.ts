@@ -42,8 +42,9 @@ export function capitalize<Type$$1>($$1: Type$$1): string {
 
   return toString($$1)
     .split(SEPARATOR)
-    .map(algo({ lower: _lwr, upper: _upr }))
-    .join("");
+      .map(algo({ lower: _lwr, upper: _upr }))
+    .join("")
+  ;
 }
 
 /**
@@ -75,26 +76,43 @@ export function escapeHtml($$1: string): string {
  * @SPECIAL_CHARS ^$\.*+?()[]{}|
  */
 export function escapeRegExp($$1: string, exceptChars: string[] = []): string {
-  const algo = (str: string) => {
-    const characters = "^$.*+?()[]{}|".split("")
+  const SPECIAL_CHARS = "^$.*+?()[]{}|";
+  const ESCAPED_WITH = "\\";
+
+  const escaped = escapeCharacters(SPECIAL_CHARS, ESCAPED_WITH, exceptChars);
+  const charsToEscapeRE = new RegExp(`[${escaped}]`, "g");
+  const checkCharsRE = new RegExp(charsToEscapeRE.source, "g");
+  const str = toString($$1);
+
+  return checkCharsRE.test(str)
+    ? str.replace(charsToEscapeRE, ESCAPED_WITH + "$&")
+    : str
+  ;
+}
+
+/**
+ * Échappe des caractères d'une chaîne de caractère
+ */
+export function escapeCharacters(
+  specialChars: string,
+  escapeWith: string,
+  exceptChars: string[] = [],
+): string {
+  return specialChars
+    .split("")
       .filter((w) => !exceptChars.includes(w))
-      .map((w) => `\\${w}`)
-      .join("");
-
-    const CHARS_TO_ESCAPE = new RegExp(`[${characters}]`, "g");
-    const CHECK_CHARS = new RegExp(CHARS_TO_ESCAPE.source, "g");
-
-    return CHECK_CHARS.test(str) ? str.replace(CHARS_TO_ESCAPE, "\\$&") : str;
-  };
-
-  return algo(toString($$1));
+      .map((w) => escapeWith + w)
+    .join("")
+  ;
 }
 
 /**
  * @php
  */
 export function nl2br($$1: string): string {
-  const algo = (str: string) => str.replace(/\n/g, "<br />");
+  const algo = (str: string) =>
+    str.replace(/\n/g, "<br />")
+  ;
   return algo(toString($$1));
 }
 
@@ -128,7 +146,8 @@ export function userFriendlyNumber(n: number): string {
   };
 
   const format = (n: number) => {
-    // TODO: pourrait être un tableau de chaîne de caractère: [' m', ' Mo', ' Md']
+    // TODO: pourrait être un tableau de chaîne de caractère:
+    //       [' m', ' Mo', ' Md']
     const abbrev = "kmb";
 
     let base = f(l(a(n)) / l(1000));
@@ -146,9 +165,12 @@ export function userFriendlyNumber(n: number): string {
  * Génère un UUID unique.
  */
 export const uuid = (): string =>
-  getRandomString("yxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx");
+  getRandomString("yxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx")
+;
 
 /**
  * Génère un hash unique.
  */
-export const hash = (): string => getRandomString("yxxxxxxy");
+export const hash = (): string =>
+  getRandomString("yxxxxxxy")
+;
