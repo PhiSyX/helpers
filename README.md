@@ -1,19 +1,19 @@
 # Mes utilitaires pour JavaScript (écrit en TypeScript).
 
-- [Documentation / API](#documentationapi)
-- [Guide de style](#styleguide)
+  - [Documentation / API](#documentationapi)
+  - [Guide de style](#styleguide)
 
 ## Répertoires :
   - **shared/**: est un dossier contenant des sources "partagées", qui pourront tant bien être utilisées pour **node**, **deno** ou le **web** ;
 
     [Types](./shared/types.d.ts)
       - `ARRAY`<`T`>
-      - `OBJECT`<`T`>
       - `FIXME`
+      - `ID`
+      - `Nullable`<`T`>
+      - `OBJECT`<`T`>
       - `TODO`
       - `WHATEVER`
-      - `Nullable`<`T`>
-      - `ID`
 
     [array.ts](./shared/array.ts)
       - `firstEntry`
@@ -24,11 +24,16 @@
       - `timestamp`
 
     [lang.ts](./shared/lang.ts)
-      - `isUndefined`
-      - `isNull`
+      - `containsURL`
+      - `iseq`
+      - `isin`
+      - `isincs`
       - `isNil`
-      - `iswmcs`
+      - `isNull`
+      - `isPrimitive`
+      - `isUndefined`
       - `iswm`
+      - `iswmcs`
 
     [reactivity.ts](./shared/reactivity.ts)
       - `reactivity`
@@ -46,9 +51,17 @@
       - `escapeRegExp`
       - `hash`
       - `nl2br`
+      - `slugify`*
+      - `stripHtml`
       - `toString`
       - `userFriendlyNumber`
       - `uuid`
+
+    [utils.ts](./shared/utils.ts)
+      - `wait`
+      - `higherOrderFunction`
+      - `higherOrderFunctionReverse`
+      - `higherOrderFunctionReverseArguments`
 
   - **deno/**: est dossier contenant des utilitaires pour **[deno](https://deno.land/)** uniquement ;
 
@@ -64,42 +77,49 @@
   - **node/**: est un dossier contenant des utilitaires pour **node** uniquement ;
 
     [env](./node/env.ts)
-      - `__DEV__`
-      - `__PROD__`
-      - `__TEST__`
+      - constante `__DEV__`
+      - constante `__PROD__`
+      - constante `__TEST__`
       - `env`
 
   - **web/**: est un dossier contenant des utilitaires pour le **web** uniquement ;
 
-    [env](./web/env.ts)
-      - `userAgent`
-      - `isAndroid`
-      - `isIOS`
-      - `isMobile`
+    [dom](./web/dom.ts)
+      - constante `$html`
+      - constante `$body`
 
+    [env](./web/env.ts)
+      - constante `userAgent`
+      - constante `isAndroid`
+      - constante `isIOS`
+      - constante `isMobile`
+      - constante `isHttps`
 
 
 
 ## Récupérer ce projet ?
-  - Télécharger le projet depuis un terminal en utilisant [git](https://git-scm.com), ou en téléchargeant le zip.
+  - Projet existant **sans** git d'initialisé ?
+
+    Télécharger le projet depuis un terminal en utilisant [git](https://git-scm.com), ou en téléchargeant le zip.
 
     Ligne de commande:
     > $   git clone https://github.com/PhiSyX/helpers
 
+    Créer un [lien symbolique](https://fr.wikipedia.org/wiki/Lien_symbolique) vers votre projet.
+
+  - Projet existant **avec** git d'initialisé ?
+
+    > $   git submodule add https://github.com/PhiSyX/helpers" **PROJECT_TARGET**
+    > > **PROJECT_TARGET**  "/mon/super/projet/personnel/helpers"
+
+
+
 ## Utiliser ce code pour les autres projets ?
-  - Requiert d'avoir un projet pouvant compiler le typescript. (ou Deno).
-
-  - Créer un [lien symbolique](https://fr.wikipedia.org/wiki/Lien_symbolique).
-
-    Comme ce sont des sources qui pourront être partagées entre plusieurs projets, il est préférable de créer un lien symbolique.
-
-    Sous Windows:
-    > $   MKLINK /D "**PROJECT_TARGET**" "**REPO_GIT_FOLDER**"
-    > > **PROJECT_TARGET**  "/mon/super/projet/personnel/helpers" \
-    > > **REPO_GIT_FOLDER** "/dossier/téléchargé/helpers"
-    >
+  - Requiert d'avoir un projet pouvant compiler le typescript.
 
   - Importer les utilitaires spécifiques dans les différents projets et les utiliser.
+
+
 
 ## Tests unitaires :
   Pour lancer les tests unitaires, il requiert [deno](https://deno.land/) d'installé sur son OS.
@@ -131,15 +151,17 @@ Pour lancer les tests unitaires d'un test en particulier
 
 # Documentation/API
 
+Cette documentation peut contenir des coquilles, ou peut ne pas être complète (par manque de temps, ou oublie).
+
 Répertoire [shared/](./shared)
   - [Types](./shared/types.d.ts)
     - "`ARRAY`<`T`>" ce type est l'équivalent de "`T[]`"
-    - "`OBJECT`<`T`>" ce type est l'équivalent de "`{ [p: string]: T }`"
     - "`FIXME`"
+    - "`ID`" ce type est l'équivalent de "`number | string`"
+    - "`Nullable`<`T`>" ce type est l'équivalent de "`T | null`"
+    - "`OBJECT`<`T`>" ce type est l'équivalent de "`{ [p: string]: T }`"
     - "`TODO`"
     - "`WHATEVER`" alias de "`any`"
-    - "`Nullable`<`T`>" ce type est l'équivalent de "`T | null`"
-    - "`ID`" ce type est l'équivalent de "`number | string`"
 
   - [array.ts](./shared/array.ts)
     - `firstEntry`<`ItemType`>(arr: `ItemType`): [`ItemType`, number] | [null,null];
@@ -190,17 +212,43 @@ Répertoire [shared/](./shared)
       > ```
 
   - [lang.ts](./shared/lang.ts)
-    - `isUndefined`($$1): boolean;
+    - `containsURL`($$1): boolean;
 
-      Retourne `true` si une entrée est `undefined`, `false` sinon.
+      Retourne `true` si une entrée contient une URL, `false` sinon.
+
+    - `iseq`($$1, $$2): boolean;
+
+      est l'équivalent de `return ($$1 === $$2)`.
+
+      Peut être utile dans un cas de `higherOrderFunction`, ce pour quoi elle a été crée.
+
+      > Exemple :
+      > ```js
+      > const v1 = "foo";
+      > const v2 = Bar;
+      > const isString = higherOrderFunction(iseq)("string");
+      > console.log(isString(typeof v1), isString(typeof v2)
+      > ```
+
+    - `isin`($$1, $$2): boolean
+
+      Alias de `isincs` (mais insensible à la casse)
+
+    - `isincs`($$1, $$2): boolean;
+
+      est l'équivalent de `$$2.indexOf($$1) >= 0`
+
+    - `isNil`($$1): boolean;
+
+      Retourne `true` si une entrée est `null` et/ou `undefined`, `false` sinon.
 
     - `isNull`($$1): boolean;
 
       Retourne `true` si une entrée est `null`, `false` sinon.
 
-    - `isNil`($$1): boolean;
+    - `iswm`(needle: `string`, haystack: `string`**[**, exceptChars: `string[]`, flags: `string` = "i"**]**): boolean;
 
-      Retourne `true` si une entrée est `null` et/ou `undefined`, `false` sinon.
+      Alias de `iswmcs` (mais insensible à la casse)
 
     - `iswmcs`(needle: `string`, haystack: `string`**[**, exceptChars: `string[]`, flags: `string`**]**): boolean;
 
@@ -216,9 +264,13 @@ Répertoire [shared/](./shared)
       > console.log(iswmcs("Amérique", "Am[ée3]r??ue", ["[", "]"])); // true
       > ```
 
-    - `iswm`(needle: `string`, haystack: `string`**[**, exceptChars: `string[]`, flags: `string` = "i"**]**): boolean;
+    - `isPrimitive`($$1): boolean
 
-      Alias de `iswmcs` (mais insensible à la casse)
+      Retourne `true` si une entrée est une valeur primitive (`boolean`, `number` ou `string`), `false` sinon.
+
+    - `isUndefined`($$1): boolean;
+
+      Retourne `true` si une entrée est `undefined`, `false` sinon.
 
   - [reactivity.ts](./shared/reactivity.ts)
     - `reactivity`<`ObjectType`>(raw: `ObjectType`): Proxy<`ObjectType`>;
@@ -307,6 +359,14 @@ Répertoire [shared/](./shared)
 
       Ajout de sauts de lignes HTML "<`br` />" à chaque nouvelle ligne "`\n`".
 
+    - `slugify`($$1 **[**, separator: `string` = "-" **]**): string;
+
+      Transforme une entrée en [slug](https://fr.wikipedia.org/wiki/Slug) web.
+
+    - `stripHtml`($$1): string;
+
+      Retire tous les tags HTML d'une entrée.
+
     - `toString`($$1): string;
 
       Transforme une entrée en chaîne de caractère.
@@ -331,6 +391,50 @@ Répertoire [shared/](./shared)
     - `uuid`(): string;
 
       Génère une chaîne de caractère avec des caractères alphanumériques aléatoires de taille 36.
+
+  - [utils.ts](./shared/utils.ts)
+    - `wait`(ms: `number`): void;
+
+      Bloque l'event loop pendant une certaine durée passé en argument, durée en milliseconde. 1 seconde = 1000, 2 secondes = 2000, ... ;
+
+    - `higherOrderFunction`(func **[**, arity: `Nullable<number>` = null **]**): `ReturnType`<`func`>;
+
+      Transforme une simple fonction en fonction d'ordre supérieur.
+
+      > Exemple:
+      > ```js
+      > const myLogFunction = (a, b, c) => console.log({ a, b, c });
+      > const testLog = higherOrderFunction(myLogFunction);
+      > testLog("a", "b", "c");
+      > testLog("a")("b")("c");
+      > testLog("a", "b")("c");
+      > ```
+
+    - `higherOrderFunctionReverse`(func **[**, arity: `Nullable<number>` = null **]**): `ReturnType`<`func`>;
+
+      Alias de `higherOrderFunction` en inversant les arguments.
+
+      > Exemple:
+      > ```js
+      > const myLogFunction = (a, b, c) => console.log({ a, b, c });
+      > const testLog = higherOrderFunctionReverse(myLogFunction);
+      > testLog("c", "b", "a");
+      > testLog("c")("b")("a");
+      > testLog("b", "c")("a");
+      > ```
+
+    - `higherOrderFunctionReverseArguments`(func **[**, arity: `Nullable<number>` = null **]**): `ReturnType`<`func`>;
+
+      Alias de `higherOrderFunctionReverse` en inversant les arguments des arguments.
+
+      > Exemple:
+      > ```js
+      > const myLogFunction = (a, b, c) => console.log({ a, b, c });
+      > const testLog = higherOrderFunctionReverseArguments(myLogFunction);
+      > testLog("c", "b", "a");
+      > testLog("c")("b")("a");
+      > testLog("c", "b")("a");
+      > ```
 
 Répertoire [deno/](./deno)
   - [fs](./deno/fs.ts)
@@ -374,14 +478,16 @@ Répertoire [node/](./node)
       > ```
 
 Répertoire [web/](./web)
+  - [dom](./web/dom.ts)
+      - constante `$html`: HTMLHtmlElement;
+      - constante `$body`: HTMLBodyElement;
+
   - [env](./web/env.ts)
     - constante `userAgent`: boolean;
-
     - constante `isAndroid`: boolean;
-
     - constante `isIOS`: boolean;
-
     - constante `isMobile`: boolean;
+    - constante `isHttps`: boolean;
 
 # STYLEGUIDE
 ## Le JS pour ce projet :
