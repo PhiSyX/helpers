@@ -20,5 +20,6 @@ export async function readFile(
   );
   return lowerEncoding === "json"
     ? JSON.parse(decoder.decode(content))
-    : decoder.decode(content);
+    : decoder.decode(content)
+  ;
 }

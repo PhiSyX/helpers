@@ -40,7 +40,10 @@ export const __TEST__: boolean = env("NODE_ENV") === "test" || (
 export function env(key: string, $default?: string): Nullable<string> {
   // @ts-ignore
   return process.env[key] || (
-    // @ts-ignore
-    $default ? process.env[$default] || $default : $default
-  ) || $default || null;
+    $default
+      // @ts-ignore
+      ? process.env[$default] || $default
+      : $default
+    ) || $default || null
+  ;
 }

@@ -40,12 +40,14 @@ export function $address(
     case 3:
       temp = temp
         .replace(/([^!]+)![~]*([^@]+)@/, "*!*$2@")
-        .replace(/[@][^.]+(.*)/, "@*$1");
+        .replace(/[@][^.]+(.*)/, "@*$1")
+      ;
       break;
     case 4:
       temp = temp
         .replace(/([^!]+)![~]*([^@]+)@/, "*!*@")
-        .replace(/[@][^.]+(.*)/, "@*$1");
+        .replace(/[@][^.]+(.*)/, "@*$1")
+      ;
       break;
     case 5:
       break;
@@ -63,7 +65,8 @@ export function $address(
     case 9:
       temp = temp
         .replace(/([^!]+)![~]*([^@]+)@/, "$1!*@")
-        .replace(/@[^.]+(.*)/, "@*$1");
+        .replace(/@[^.]+(.*)/, "@*$1")
+      ;
       break;
 
     default:
