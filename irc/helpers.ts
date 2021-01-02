@@ -1,6 +1,18 @@
+import { iswm } from "../shared/lang.ts";
+
 export const isChan = (name: string) => /^#[^:]+$/.test(name);
 export const isPrivateGroup = (name: string) => /^#:/.test(name);
 export const isPrivate = (name: string) => isChan(name) && isPrivateGroup(name);
+
+export const isAway = (nick: string) =>
+  iswm(nick, "*[absent*]") ||
+  iswm(nick, "*[away]")
+;
+
+export const isBusy = (nick: string) =>
+  iswm(nick, "*[occupe*]") ||
+  iswm(nick, "*[busy]")
+;
 
 interface IrcNickAddress {
   ident: string;
