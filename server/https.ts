@@ -31,5 +31,4 @@ export const localNetworkHttps = (path: PathInfo) =>
     ca: "CA.cer",
     cert: "localhost.cer",
     key: "localhost.pvk",
-  })
-;
+  });

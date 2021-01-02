@@ -1,6 +1,13 @@
 import { assertEquals } from "https://deno.land/std@0.82.0/testing/asserts.ts";
 
-import { isin, isincs, isNil, isNull, isUndefined } from "./lang.ts";
+import {
+  containsURL,
+  isin,
+  isincs,
+  isNil,
+  isNull,
+  isUndefined,
+} from "./lang.ts";
 
 import { iswm, iswmcs } from "./lang.ts";
 import { higherOrderFunction } from "./utils.ts";
@@ -108,6 +115,20 @@ Deno.test(
     );
     assertEquals(
       iswmcs("PhiSyX|24ITmXX", "PhiSyX|????[mf]??", ["[", "]"]),
+      true,
+    );
+  },
+);
+
+Deno.test(
+  "[shared/lang/containsURL]: base",
+  () => {
+    assertEquals(
+      containsURL("je fais un test, visitez https://d"),
+      false,
+    );
+    assertEquals(
+      containsURL("Mon repo git https://github.com/PhiSyX/helpers blablabla"),
       true,
     );
   },

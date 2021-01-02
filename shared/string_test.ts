@@ -1,6 +1,15 @@
-import { assertEquals } from "https://deno.land/std@0.82.0/testing/asserts.ts";
+import {
+  assertEquals,
+  assertMatch,
+  assertNotMatch,
+} from "https://deno.land/std@0.82.0/testing/asserts.ts";
 
-import { capitalize, toString, userFriendlyNumber } from "./string.ts";
+import {
+  capitalize,
+  stripHtml,
+  toString,
+  userFriendlyNumber,
+} from "./string.ts";
 
 Deno.test(
   "[shared/string/toString]: base",
@@ -69,5 +78,50 @@ Deno.test(
     assertEquals(userFriendlyNumber(103300), "103.3k");
 
     assertEquals(userFriendlyNumber(9000000), "9m");
+  },
+);
+
+Deno.test(
+  "[shared/string/stripHtml]: base",
+  () => {
+    assertMatch(
+      `<h3>Selection du texte</h3>
+    <div class="playground@bg:primary">
+      <p class="u-select:none">.u-select:none</p>
+      <p class="u-select:text">.u-select:text</p>
+      <p class="u-select:all">.u-select:all</p>
+      <p class="u-select:none">Ce texte ne peut pas etre selectionné.</p>
+      <p class="u-select:text">
+        Ce texte est
+        <span class="u-select:none">partiellement</span> selectionnable
+      </p>
+      <p class="u-select:all">
+        Ce texte est
+        <span class="u-select:none">partiellement</span> selectionnable au
+        clique.
+      </p>
+    </div>`,
+      /(<([^>]+)>)/g,
+    );
+
+    assertNotMatch(
+      stripHtml(`<h3>Selection du texte</h3>
+    <div class="playground@bg:primary">
+      <p class="u-select:none">.u-select:none</p>
+      <p class="u-select:text">.u-select:text</p>
+      <p class="u-select:all">.u-select:all</p>
+      <p class="u-select:none">Ce texte ne peut pas etre selectionné.</p>
+      <p class="u-select:text">
+        Ce texte est
+        <span class="u-select:none">partiellement</span> selectionnable
+      </p>
+      <p class="u-select:all">
+        Ce texte est
+        <span class="u-select:none">partiellement</span> selectionnable au
+        clique.
+      </p>
+    </div>`),
+      /(<([^>]+)>)/g,
+    );
   },
 );

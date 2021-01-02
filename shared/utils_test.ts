@@ -61,10 +61,10 @@ Deno.test(
       str3: "c",
     });
 
-    assertEquals(testHOFRA("c", "b")("a"), {
+    assertEquals(testHOFRA("b", "c")("a"), {
       str1: "a",
-      str2: "c",
-      str3: "b",
+      str2: "b",
+      str3: "c",
     });
 
     const testHOFRA2 = higherOrderFunctionReverse(inArray);

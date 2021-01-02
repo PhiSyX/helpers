@@ -6,13 +6,11 @@ export const isPrivate = (name: string) => isChan(name) && isPrivateGroup(name);
 
 export const isAway = (nick: string) =>
   iswm(nick, "*[absent*]") ||
-  iswm(nick, "*[away]")
-;
+  iswm(nick, "*[away]");
 
 export const isBusy = (nick: string) =>
   iswm(nick, "*[occupe*]") ||
-  iswm(nick, "*[busy]")
-;
+  iswm(nick, "*[busy]");
 
 interface IrcNickAddress {
   ident: string;
@@ -52,14 +50,12 @@ export function $address(
     case 3:
       temp = temp
         .replace(/([^!]+)![~]*([^@]+)@/, "*!*$2@")
-        .replace(/[@][^.]+(.*)/, "@*$1")
-      ;
+        .replace(/[@][^.]+(.*)/, "@*$1");
       break;
     case 4:
       temp = temp
         .replace(/([^!]+)![~]*([^@]+)@/, "*!*@")
-        .replace(/[@][^.]+(.*)/, "@*$1")
-      ;
+        .replace(/[@][^.]+(.*)/, "@*$1");
       break;
     case 5:
       break;
@@ -77,8 +73,7 @@ export function $address(
     case 9:
       temp = temp
         .replace(/([^!]+)![~]*([^@]+)@/, "$1!*@")
-        .replace(/@[^.]+(.*)/, "@*$1")
-      ;
+        .replace(/@[^.]+(.*)/, "@*$1");
       break;
 
     default:

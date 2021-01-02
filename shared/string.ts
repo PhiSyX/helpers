@@ -42,9 +42,13 @@ export function capitalize<Type$$1>($$1: Type$$1): string {
 
   return toString($$1)
     .split(SEPARATOR)
-      .map(algo({ lower: _lwr, upper: _upr }))
-    .join("")
-  ;
+    .map(algo({ lower: _lwr, upper: _upr }))
+    .join("");
+}
+
+export function stripHtml($$1: WHATEVER) {
+  const algo = (str: string) => str.replace(/(<([^>]+)>)/g, "");
+  return algo(toString($$1));
 }
 
 /**
@@ -52,7 +56,7 @@ export function capitalize<Type$$1>($$1: Type$$1): string {
  *
  * @see https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html#rule-1-html-encode-before-inserting-untrusted-data-into-html-element-content
  */
-export function escapeHtml($$1: string): string {
+export function escapeHtml($$1: WHATEVER): string {
   const algo = (str: string) => {
     const CHARS_TO_ESCAPE: OBJECT<string> = {
       "&": "&amp;",
@@ -75,7 +79,10 @@ export function escapeHtml($$1: string): string {
  *
  * @SPECIAL_CHARS ^$\.*+?()[]{}|
  */
-export function escapeRegExp($$1: string, exceptChars: string[] = []): string {
+export function escapeRegExp(
+  $$1: WHATEVER,
+  exceptChars: string[] = [],
+): string {
   const SPECIAL_CHARS = "^$.*+?()[]{}|";
   const ESCAPED_WITH = "\\";
 
@@ -86,8 +93,7 @@ export function escapeRegExp($$1: string, exceptChars: string[] = []): string {
 
   return checkCharsRE.test(str)
     ? str.replace(charsToEscapeRE, ESCAPED_WITH + "$&")
-    : str
-  ;
+    : str;
 }
 
 /**
@@ -100,19 +106,16 @@ export function escapeCharacters(
 ): string {
   return specialChars
     .split("")
-      .filter((w) => !exceptChars.includes(w))
-      .map((w) => escapeWith + w)
-    .join("")
-  ;
+    .filter((w) => !exceptChars.includes(w))
+    .map((w) => escapeWith + w)
+    .join("");
 }
 
 /**
  * @php
  */
-export function nl2br($$1: string): string {
-  const algo = (str: string) =>
-    str.replace(/\n/g, "<br />")
-  ;
+export function nl2br($$1: WHATEVER): string {
+  const algo = (str: string) => str.replace(/\n/g, "<br />");
   return algo(toString($$1));
 }
 
@@ -165,12 +168,9 @@ export function userFriendlyNumber(n: number): string {
  * Génère un UUID unique.
  */
 export const uuid = (): string =>
-  getRandomString("yxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx")
-;
+  getRandomString("yxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx");
 
 /**
  * Génère un hash unique.
  */
-export const hash = (): string =>
-  getRandomString("yxxxxxxy")
-;
+export const hash = (): string => getRandomString("yxxxxxxy");
