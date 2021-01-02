@@ -1,10 +1,28 @@
 import type { WHATEVER } from "./types.d.ts";
 
-import { escapeRegExp } from "./string.ts";
+import { _lwr, escapeRegExp, toString } from "./string.ts";
 
 export const isUndefined = ($$1: WHATEVER): boolean => $$1 === undefined;
 export const isNull = ($$1: WHATEVER): boolean => $$1 === null;
 export const isNil = ($$1: WHATEVER): boolean => $$1 == null;
+export const isPrimitive = ($$1: WHATEVER): boolean => (
+  typeof $$1 === "string" ||
+  typeof $$1 === "number" ||
+  typeof $$1 === "boolean"
+);
+export const iseq = ($$1: WHATEVER, $$2: WHATEVER) => $$1 === $$2;
+
+export function isincs ($$1: WHATEVER, $$2: WHATEVER): boolean {
+  const algo = (searchString: string, str: string) =>
+    str.indexOf(searchString) >= 0
+  ;
+
+  return algo(toString($$1), toString($$2));
+};
+
+export function isin ($$1: WHATEVER, $$2: WHATEVER): boolean {
+  return isincs(_lwr($$1), _lwr($$2));
+}
 
 export function iswmcs(
   needle: string,
@@ -22,7 +40,9 @@ export function iswmcs(
 
   const buildRegexp = escapeRegExp(haystack, exceptChars)
     .replace(/\\\?/g, ".")
-    .replace(/\\\*/g, ".*");
+    .replace(/\\\*/g, ".*")
+  ;
+
   const regexp = new RegExp(buildRegexp, flags);
   return regexp.test(needle);
 }

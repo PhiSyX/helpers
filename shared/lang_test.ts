@@ -1,6 +1,7 @@
 import { assertEquals } from "https://deno.land/std@0.82.0/testing/asserts.ts";
 
-import { isNil, isNull, isUndefined } from "./lang.ts";
+import { isin, isincs, isNil, isNull, isUndefined } from "./lang.ts";
+
 import { iswm, iswmcs } from "./lang.ts";
 import { higherOrderFunction } from "./utils.ts";
 
@@ -30,6 +31,24 @@ Deno.test(
     assertEquals(isUndefined(undefined), true);
     assertEquals(isUndefined("undefined"), false);
     assertEquals(isUndefined(null), false);
+  },
+);
+
+Deno.test(
+  "[shared/lang/isincs]: base",
+  () => {
+    assertEquals(isincs("fais", "je fais un test"), true);
+    assertEquals(isincs("faiS", "je fais un test"), false);
+  },
+);
+
+Deno.test(
+  "[shared/lang/isin]: base",
+  () => {
+    assertEquals(isin(1233, 1995), false);
+    assertEquals(isin(9, 1995), true);
+    assertEquals(isin("fais", "je fais un test"), true);
+    assertEquals(isin("faire", "je fais un test"), false);
   },
 );
 
