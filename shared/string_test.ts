@@ -2,11 +2,13 @@ import {
   assertEquals,
   assertMatch,
   assertNotMatch,
+  assertThrows,
 } from "https://deno.land/std@0.82.0/testing/asserts.ts";
 
 import {
   capitalize,
   stripHtml,
+  templateHtml,
   toString,
   userFriendlyNumber,
 } from "./string.ts";
@@ -122,6 +124,72 @@ Deno.test(
       </p>
     </div>`),
       /(<([^>]+)>)/g,
+    );
+  },
+);
+
+Deno.test(
+  "[shared/string/templateHtml]: base",
+  () => {
+    // Simple texte
+    const simpleHtml = templateHtml(
+      `<strong> text </strong>`,
+    );
+    assertEquals(simpleHtml, `<strong> text </strong>`);
+
+    // HTML
+    const html = templateHtml(
+      `<strong>{{ remaining }}</strong> {{ remaining }} left`,
+      { remaining: 20 },
+    );
+    assertEquals(html, `<strong>20</strong> 20 left`);
+
+    // Propriété manquante
+    assertThrows(() =>
+      templateHtml(
+        `<strong>{{ remaining }}</strong> {{ remaining }} left`,
+        {
+          lol: "foo",
+        },
+      )
+    );
+  },
+);
+
+Deno.test(
+  "[shared/string/templateHtml]: escape html",
+  () => {
+    // Double interpolation {{ }}
+    const html = templateHtml(
+      `<strong>{{ remaining }}</strong> {{ remaining }} left`,
+      { remaining: "<h2>20</h2>" },
+    );
+
+    assertEquals(
+      html,
+      `<strong>&lt;h2&gt;20&lt;/h2&gt;</strong> &lt;h2&gt;20&lt;/h2&gt; left`,
+    );
+
+    // Triple interpolation {{{ }}}
+    const html2 = templateHtml(
+      `<strong>{{{ remaining }}}</strong> {{{ remaining }}} left`,
+      { remaining: "<h2>20</h2>" },
+    );
+
+    assertEquals(
+      html2,
+      `<strong><h2>20</h2></strong> <h2>20</h2> left`,
+    );
+
+    // les deux {{ }} et {{{ }}}
+    const html3 = templateHtml(
+      `<strong>{{{ remaining }}}</strong> {{ remaining }} left`,
+      { remaining: "<h2>20</h2>" },
+    );
+
+    assertEquals(
+      html3,
+      `<strong><h2>20</h2></strong> &lt;h2&gt;20&lt;/h2&gt; left`,
     );
   },
 );

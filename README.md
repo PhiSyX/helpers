@@ -53,6 +53,7 @@
       - `nl2br`
       - `slugify`*
       - `stripHtml`
+      - `templateHtml`
       - `toString`
       - `userFriendlyNumber`
       - `uuid`
@@ -366,6 +367,15 @@ Répertoire [shared/](./shared)
     - `stripHtml`($$1): string;
 
       Retire tous les tags HTML d'une entrée.
+
+    - `templateHtml`($$1 **[**, payload: `object` = {}, escapeHtmlFn: ($$1) => string **]**): string;
+
+      > Exemple :
+      > ```js
+      > const data = { text: "un texte", html: "<h1>un titre</h1>" };
+      > const html = templateHtml(`<p>{{ text }}</p><div>{{{ html }}}</div>`, data);
+      > console.log(html); // `<p>un texte</p><div><h1>un titre</h1></div>`
+      > ```
 
     - `toString`($$1): string;
 

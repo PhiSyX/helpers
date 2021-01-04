@@ -1,6 +1,8 @@
 import type { OBJECT, WHATEVER } from "./types.d.ts";
 
-import { isNil } from "./lang.ts";
+import { isincs, isNil } from "./lang.ts";
+
+import { higherOrderFunctionReverse } from "./utils.ts";
 
 export const EMPTY_STRING = "";
 
@@ -117,6 +119,65 @@ export function escapeCharacters(
 export function nl2br($$1: WHATEVER): string {
   const algo = (str: string) => str.replace(/\n/g, "<br />");
   return algo(toString($$1));
+}
+
+export function templateHtml(
+  template: string,
+  payload: object = {},
+  escapeHtmlFn: typeof escapeHtml = escapeHtml,
+) {
+  const handleTemplate = (html: string) => {
+    let temp = html.replace(/`/g, "\\$&");
+
+    const hasInterpolation = higherOrderFunctionReverse(isincs)(
+      temp,
+    );
+
+    if (!(hasInterpolation("{{") && hasInterpolation("}}"))) {
+      return "`" + temp + "`";
+    }
+
+    temp = temp
+      .replace(
+        /\{{3}\s*([^\s}]+)\s*\}{3}/g,
+        "${ !_p(payload.$1) ? _s( payload.$1 ) : error(payload, '$1')}",
+      )
+      .replace(
+        /\{{2}\s*([^\s}]+)\s*\}{2}/g,
+        "${ !_p(payload.$1) ? _h(payload.$1) : error(payload, '$1') }",
+      );
+
+    return "`" + temp + "`";
+  };
+
+  const managedTemplated = handleTemplate(template);
+
+  const injectPayload = new Function(
+    "payload",
+    "error",
+    "_p",
+    "_s",
+    "_h",
+    `return ${managedTemplated};`,
+  );
+
+  const error = (data: object, prop: string) => {
+    throw new Error(
+      `
+    La propriété "${prop}" n'existe pas dans vos données:
+    Vos données sont:
+      ${toString(data)}
+    `,
+    );
+  };
+
+  return injectPayload(
+    payload,
+    error,
+    isNil,
+    toString,
+    escapeHtmlFn,
+  );
 }
 
 /**
