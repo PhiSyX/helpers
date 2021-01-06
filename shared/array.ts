@@ -6,6 +6,26 @@ type ArrayRecordIndex = number;
 type ArrayRecordEntry<T> = T;
 type ArrayRecord<T> = [ArrayRecordEntry<T>, ArrayRecordIndex];
 
+export function chunkArray<ArrayType = WHATEVER>(
+  arr: ArrayType[],
+  size: number,
+): Array<ArrayType[]> {
+  const reducer = (
+    segments: Array<ArrayType[]>,
+    _: ArrayType,
+    idx: number,
+  ): Array<ArrayType[]> => {
+    if (idx % size === 0) {
+      const newArr = arr.slice(idx, idx + size);
+      return [...segments, newArr] as Array<ArrayType[]>;
+    }
+
+    return segments;
+  };
+
+  return arr.reduce(reducer, []);
+}
+
 /**
  * Retourne une entrée aléatoire d'un tableau.
  */

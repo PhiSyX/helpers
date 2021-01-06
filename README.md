@@ -16,6 +16,7 @@
       - `WHATEVER`
 
     [array.ts](./shared/array.ts)
+      - `chunkArray`
       - `firstEntry`
       - `lastEntry`
       - `randomEntry`
@@ -168,6 +169,24 @@ Répertoire [shared/](./shared)
     - "`WHATEVER`" alias de "`any`"
 
   - [array.ts](./shared/array.ts)
+    - `chunkArray`<`ItemType`>(arr: `ItemType[]`, size: `number`): `Array`<`ItemType[]`>`
+
+      Retourne un tableau de tableaux contenant des entrées de taille X (`size`)
+
+      > Exemple :
+      > ```js
+      > const arr = chunkArray(
+      >   [1, 2, 3, 4, 5, 6, 7, 8],
+      >   2
+      > );
+      > console.log(arr); // [ [ 1, 2 ], [ 3, 4 ], [ 5, 6 ], [ 7, 8 ] ]
+      > const arr2 = chunkArray(
+      >   [1, 2, 3, 4, 5, 6, 7, 8],
+      >   250
+      > );
+      > console.log(arr2); // [ [1, 2, 3, 4, 5, 6, 7, 8] ]
+      > ```
+
     - `firstEntry`<`ItemType`>(arr: `ItemType`): [`ItemType`, number] | [null,null];
 
       Retourne la première entrée d'un tableau, s'il y a des entrées, null sinon.

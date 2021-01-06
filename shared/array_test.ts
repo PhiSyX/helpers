@@ -1,6 +1,19 @@
 import { assertEquals } from "https://deno.land/std@0.82.0/testing/asserts.ts";
 
-import { firstEntry, lastEntry, randomEntry } from "./array.ts";
+import { chunkArray, firstEntry, lastEntry, randomEntry } from "./array.ts";
+
+Deno.test(
+  "[shared/array/chunkArray]: base",
+  () => {
+    const myArray = [1, 2, 3, 4, 5, 6, 7, 8];
+
+    const chunked = chunkArray(myArray, 2);
+    assertEquals(chunked.length, 4);
+
+    const chunked2 = chunkArray(myArray, 250);
+    assertEquals(chunked2.length, 1);
+  },
+);
 
 Deno.test(
   "[shared/array/firstEntry]: comportement de base",
