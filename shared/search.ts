@@ -21,17 +21,10 @@ const pushToResult = higherOrderFunction((
 
   const [last] = lastEntry(arr);
   if (last && last.type === type) {
-    // ! FIXME
-    last.word += word;
-    return arr;
+    return [...arr.slice(0, -1), { type, word: last.word + word }];
   }
 
-  const payload = {
-    type,
-    word,
-  };
-
-  return [...arr, payload];
+  return [...arr, { type, word }];
 });
 
 /**
