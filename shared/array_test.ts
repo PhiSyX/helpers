@@ -1,6 +1,12 @@
 import { assertEquals } from "https://deno.land/std@0.82.0/testing/asserts.ts";
 
-import { chunkArray, firstEntry, lastEntry, randomEntry } from "./array.ts";
+import {
+  chunkArray,
+  firstEntry,
+  lastEntry,
+  pluckCollect,
+  randomEntry,
+} from "./array.ts";
 
 Deno.test(
   "[shared/array/chunkArray]: base",
@@ -81,5 +87,28 @@ Deno.test(
   "[shared/array/randomEntry]: vide",
   () => {
     assertEquals(randomEntry([]), [null, null]);
+  },
+);
+
+Deno.test(
+  "[shared/array/pluckCollect]: base",
+  () => {
+    const collection = [
+      { nick: "Mike", mode: ["q"] },
+      { nick: "PhiSyX", mode: ["h"] },
+      { nick: "fakeNick", mode: ["v"] },
+      { nickss: "fakeNick", mode: ["v"] },
+    ];
+    const result = pluckCollect<string>(collection, "nick");
+    assertEquals(
+      result,
+      ["Mike", "PhiSyX", "fakeNick"],
+    );
+
+    const result2 = pluckCollect<string>(collection, "mode");
+    assertEquals(
+      result2,
+      [["q"], ["h"], ["v"], ["v"]],
+    );
   },
 );

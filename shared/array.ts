@@ -1,4 +1,4 @@
-import type { WHATEVER } from "./types.d.ts";
+import type { OBJECT, WHATEVER } from "./types.d.ts";
 
 import { isNil, isUndefined } from "./lang.ts";
 
@@ -57,4 +57,11 @@ export function lastEntry<ArrayType = WHATEVER>(
   const index = arr.length - 1;
   const entry = arr[index];
   return !isNil(entry) ? [entry, index] : [null, null];
+}
+
+export function pluckCollect<ReturnType>(
+  arr: OBJECT[],
+  propName: string,
+): ReturnType[] {
+  return arr.map((obj) => obj[propName]).filter(Boolean);
 }

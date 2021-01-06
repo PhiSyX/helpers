@@ -19,6 +19,7 @@
       - `chunkArray`
       - `firstEntry`
       - `lastEntry`
+      - `pluckCollect`
       - `randomEntry`
 
     [date.ts](./shared/date.ts) (fr)
@@ -208,7 +209,7 @@ Répertoire [shared/](./shared)
       > console.log(arr2); // [ [1, 2, 3, 4, 5, 6, 7, 8] ]
       > ```
 
-    - `firstEntry`<`ItemType`>(arr: `ItemType`): [`ItemType`, number] | [null,null];
+    - `firstEntry`<`ItemType`>(arr: `ItemType[]`): [`ItemType`, number] | [null,null];
 
       Retourne la première entrée d'un tableau, s'il y a des entrées, null sinon.
 
@@ -221,7 +222,7 @@ Répertoire [shared/](./shared)
       > console.log(value2, index2); // null, null
       > ```
 
-    - `lastEntry`<`ItemType`>(arr: `ItemType`): [`ItemType`, number] | [null,null];
+    - `lastEntry`<`ItemType`>(arr: `ItemType[]`): [`ItemType`, number] | [null,null];
 
       Retourne la dernière entrée d'un tableau, s'il y a des entrées, null sinon.
 
@@ -234,7 +235,27 @@ Répertoire [shared/](./shared)
       > console.log(value2, index2); // null, null
       > ```
 
-    - `randomEntry`<`ItemType`>(arr: `ItemType`): [`ItemType`, number] | [null,null];
+    - `pluckCollect`<`ReturnType`>(arr: `object`[], propName: `string`): `ReturnType[]`;
+
+      Extrait les valeurs d'une collection en fonction d'un nom de propriété.
+
+      > Exemple :
+      > ```js
+      > const collection = [
+      >   { nick: "Mike", mode: ["q"] },
+      >   { nick: "PhiSyX", mode: ["h"] },
+      >   { nick: "fakeNick", mode: ["v"] },
+      >   { nickss: "fakeNick", mode: ["v"] }, // erreur de propriété volontaire
+      > ];
+      >
+      > const result = pluckCollect<string>(collection, "nick");
+      > console.log(result);  // ["Mike", "PhiSyX", "fakeNick"]
+      >
+      > const result2 = pluckCollect<string>(collection, "mode");
+      > console.log(result2); // [["q"], ["h"], ["v"], ["v"]],
+      > ```
+
+    - `randomEntry`<`ItemType`>(arr: `ItemType[]`): [`ItemType`, number] | [null,null];
 
       Retourne une entrée aléatoire d'un tableau, s'il y a des entrées, null sinon.
 
