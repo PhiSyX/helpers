@@ -148,6 +148,27 @@ Pour lancer les tests unitaires d'un test en particulier
   > $   deno test **$DIRECTORY**/**$FILENAME**_test.ts [flags]
 
 
+
+## Tests End to End :
+  Pour lancer les tests E2E, il requiert [node](https://nodejs.org/fr/) d'installé sur son OS. \
+  J'utilise [Cypress](https://www.cypress.io) pour les tests E2E de ce projet.
+
+  Les fichiers de tests E2E se terminent tous par **_e2e.ts**.
+
+  - Installation des dépendances de tests E2E
+    > $   cd web/ \
+    > $   **npm** install
+
+  - Avant de lancer les tests E2E, il faut lancer un serveur de test:
+    > $   **npm** run test:server
+
+  - Lancer les tests E2E :
+    > $   **npm** run test:e2e
+
+  **npm** : peut être remplacé par des alternatives (**yarn**,...?)
+
+
+
 ---
 ---
 ---

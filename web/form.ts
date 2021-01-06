@@ -4,7 +4,7 @@ export function formData($form: string | HTMLFormElement) {
   if (typeof $form === "string") {
     const selector = toString($form);
 
-    $form = document.querySelector(selector);
+    $form = document.querySelector(selector) as HTMLFormElement;
 
     if (!$form) {
       throw new Error(

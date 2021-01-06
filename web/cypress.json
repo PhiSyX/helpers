@@ -1,0 +1,9 @@
+{
+  "fixturesFolder": "./testdata",
+  "integrationFolder": "./",
+  "pluginsFile": "./e2e/plugins/index.ts",
+  "screenshotsFolder": "./e2e/screenshots",
+  "supportFile": "./e2e/support/index.ts",
+  "testFiles": "**/*_e2e.*",
+  "videosFolder": "./e2e/videos"
+}

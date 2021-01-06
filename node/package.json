@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "helpers",
+  "name": "node",
   "description": "Mes dépendances utiles pour node",
   "author": "Mike 'PhiSyX' S.",
   "license": "MIT",

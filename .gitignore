@@ -1,1 +1,6 @@
-.vscode
+.vscode/
+node_modules/
+**/e2e/integration/
+
+*.lock
+example.*
