@@ -96,6 +96,9 @@
       - constante `isMobile`
       - constante `isHttps`
 
+    [form](./web/form.ts)
+      - `formData`
+
 
 
 ## Récupérer ce projet ?
@@ -498,6 +501,17 @@ Répertoire [web/](./web)
     - constante `isIOS`: boolean;
     - constante `isMobile`: boolean;
     - constante `isHttps`: boolean;
+
+  - [form](./web/form.ts)
+    - `formData`($form: `string` | `HTMLFormElement`): `FormData`;
+
+      > Exemple :
+      > ```js
+      > const data = formData("#my-form");
+      > for (const [key, value] of data) {
+      >   console.log(key, value);
+      > }
+      > ```
 
 # STYLEGUIDE
 ## Le JS pour ce projet :
