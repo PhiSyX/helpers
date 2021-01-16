@@ -27,7 +27,7 @@ export const localHost = "localhost";
 export const localPort = 3000;
 export const localNetworkHttps = (path: PathInfo) =>
   httpsOptions(path, {
-    root: "../~configurations/certificates",
+    root: "../../~configurations/certificates",
     ca: "CA.cer",
     cert: "localhost.cer",
     key: "localhost.pvk",
