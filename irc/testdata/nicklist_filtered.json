@@ -1,0 +1,79 @@
+[
+  {
+    "modes": [
+      "@",
+      "~",
+      "%",
+      "+"
+    ],
+    "nick": {
+      "nick": "Chef de salon"
+    }
+  },
+  {
+    "modes": [],
+    "nick": {
+      "nick": "Utilisateur lambda"
+    }
+  },
+  {
+    "filter": true,
+    "modes": [],
+    "nick": {
+      "nick": "Utilisateur[occupee]"
+    }
+  },
+  {
+    "filter": true,
+    "modes": [],
+    "nick": {
+      "nick": "Utilisateur[absent]"
+    }
+  },
+  {
+    "modes": [
+      "%",
+      "+"
+    ],
+    "nick": {
+      "nick": "%Demi Opérateur"
+    }
+  },
+  {
+    "modes": [
+      "&",
+      "@"
+    ],
+    "nick": {
+      "nick": "Opérateur protégé"
+    }
+  },
+  {
+    "filter": true,
+    "modes": [
+      "@",
+      "&",
+      "~"
+    ],
+    "nick": {
+      "nick": "PhiSyX"
+    }
+  },
+  {
+    "modes": [
+      "@",
+      "+"
+    ],
+    "nick": {
+      "nick": "Opérateur"
+    }
+  },
+  {
+    "modes": [
+      "+"
+    ],
+    "nick": {
+      "nick": "Utilisateur important"
+    }
+  }
+]
