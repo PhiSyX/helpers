@@ -117,7 +117,7 @@ const positionsSymbols: OBJECT<IrcUIChannelNicklistGradeSymbolType> = {
   6: "+",
 };
 
-function highestMode(
+export function highestMode(
   modes: IrcChannelNicklistGradeSymbolType[],
 ): [
   IrcUIChannelNicklistGradeSymbolType,
@@ -136,24 +136,6 @@ function highestMode(
   const symbol = positionsSymbols[position];
 
   return [symbol, position];
-}
-
-function compareByMode(
-  ircNick1: IrcNickInterface,
-  ircNick2: IrcNickInterface,
-) {
-  return (
-    mode1: IrcUIChannelNicklistGradePositionType,
-    mode2: IrcUIChannelNicklistGradePositionType,
-  ) => {
-    const res = mode1 - mode2;
-
-    if (mode1 === mode2 || res === 0) {
-      return compareByNick(ircNick1, ircNick2);
-    }
-
-    return res;
-  };
 }
 
 function compareByNick(
