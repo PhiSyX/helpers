@@ -9,12 +9,12 @@
     "baseUrl": "./",
     "paths": {
       "@/*": [
-        "src/*"
+        "<SOURCE_DIR>/*"
       ],
     }
   },
   "include": [
-    "src/**/*",
+    "<SOURCE_DIR>/**/*",
   ],
   "exclude": [
     "node_modules"

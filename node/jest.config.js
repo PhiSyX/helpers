@@ -7,7 +7,7 @@ module.exports = {
     "tsx",
   ],
   moduleNameMapper: {
-    "^@/(.*)$": "<rootDir>/src/$1",
+    "^@/(.*)$": "<rootDir>/<SOURCE_DIR>/$1",
   },
   testMatch: [
     "**/(tests/unit/**/*.(spec|test)|__tests__/*).(js|jsx|ts|tsx)",

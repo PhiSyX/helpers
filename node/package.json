@@ -14,12 +14,14 @@
     "dompurify": "^2.2.2",
     "jsonwebtoken": "^8.5.1",
     "graphql": "^15.4.0",
-    "vite": "^1.0.0-rc.4",
-    "vite-tsconfig-paths": "^1.1.0",
+    "vite": "^2.0.0-beta.12",
+    "vue": "^3.0.5",
     "typeorm": "^0.2.26"
   },
   "devDependencies": {
     "@types/jest": "^26.0.19",
+    "@vitejs/plugin-vue": "^1.0.4",
+    "@vue/compiler-sfc": "^3.0.5",
     "cross-env": "^7.0.3",
     "cypress": "^6.2.0",
     "jest": "^26.4.2",
