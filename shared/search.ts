@@ -37,30 +37,30 @@ export function fuzzySearch(
   const searchLen = needle.length;
   const inStrLen = haystack.length;
 
-  let patternIdx = 0;
-  let strIdx = 0;
+  let patternIndex = 0;
+  let strIndex = 0;
 
   let matches: FuzzySearchRecord[] = [];
 
-  while (patternIdx !== searchLen && strIdx !== inStrLen) {
-    const patternChar = needle.charAt(patternIdx);
-    const strChar = haystack.charAt(strIdx);
+  while (patternIndex !== searchLen && strIndex !== inStrLen) {
+    const patternChar = needle.charAt(patternIndex);
+    const strChar = haystack.charAt(strIndex);
     const push = pushToResult(matches)(strChar);
     if (
       patternChar === strChar ||
       patternChar.toLowerCase() === strChar.toLowerCase()
     ) {
-      ++patternIdx;
+      ++patternIndex;
       matches = push("HIT");
     } else {
       matches = push("TEXT");
     }
-    ++strIdx;
+    ++strIndex;
   }
 
-  matches = pushToResult(matches)(haystack.slice(strIdx))("TEXT");
+  matches = pushToResult(matches)(haystack.slice(strIndex))("TEXT");
 
-  return searchLen !== 0 && inStrLen !== 0 && patternIdx === searchLen
+  return searchLen !== 0 && inStrLen !== 0 && patternIndex === searchLen
     ? matches
     : [];
 }
