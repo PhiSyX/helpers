@@ -28,6 +28,15 @@ export type IrcChannelNicklistGradeSymbolType =
   | "%"
   | "+";
 
+export enum GradeSymbol {
+  OWNER = "~",
+  PROTECTOR = "&",
+  OPERATOR = "@",
+  HALFOPER = "%",
+  VOICER = "+",
+  USER = "",
+}
+
 // ?         ::   IRC - UI Nick Grade
 
 export type IrcUIChannelNicklistGradeSymbolType =
@@ -42,6 +51,15 @@ export type IrcUINickGradeLetterType =
   | "v"
   | "";
 
+export enum GradeLetter {
+  OWNER = "q",
+  PROTECTOR = "a",
+  OPERATOR = "o",
+  HALFOPER = "h",
+  VOICER = "v",
+  USER = "",
+}
+
 export type IrcUIChannelNicklistGradeCSSClassType =
   | "is-owner"
   | "is-protector"
@@ -49,6 +67,15 @@ export type IrcUIChannelNicklistGradeCSSClassType =
   | "is-halfoper"
   | "is-voicer"
   | "is-irc";
+
+export enum GradeCSS {
+  OWNER = "is-owner",
+  PROTECTOR = "is-protector",
+  OPERATOR = "is-operator",
+  HALFOPER = "is-halfoper",
+  VOICER = "is-voicer",
+  USER = "is-irc",
+}
 
 export type IrcUIChannelNicklistGradePositionType =
   | 1 //   filter
@@ -59,7 +86,7 @@ export type IrcUIChannelNicklistGradePositionType =
   | 6 //   voicer
   | 99; // user
 
-enum GradePosition {
+export enum GradePosition {
   FILTER = 1,
   OWNER = 2,
   PROTECTOR = 3,
@@ -79,8 +106,8 @@ export function orderNicklist(nicks: IrcChannelNicklistInterface[]) {
     // @ts-expect-error
     const { filter: filter2, modes: modes2, nick: nick2 } = ircChannelNick2;
 
-    let [, position1] = highestMode(modes1);
-    let [, position2] = highestMode(modes2);
+    let { position: position1 } = highestMode(modes1);
+    let { position: position2 } = highestMode(modes2);
 
     if (filter1) {
       position1 = GradePosition.FILTER;
@@ -109,22 +136,47 @@ const symbolsPositions: OBJECT<IrcUIChannelNicklistGradePositionType> = {
   "+": 6,
 };
 
+const symbolsLetters: OBJECT<IrcUINickGradeLetterType> = {
+  "~": "q",
+  "&": "a",
+  "@": "o",
+  "%": "h",
+  "+": "v",
+};
+
 const positionsSymbols: OBJECT<IrcUIChannelNicklistGradeSymbolType> = {
   2: "~",
   3: "&",
   4: "@",
   5: "%",
   6: "+",
+  99: "",
+};
+
+const symbolsClasses: OBJECT<IrcUIChannelNicklistGradeCSSClassType> = {
+  "~": "is-owner",
+  "&": "is-protector",
+  "@": "is-operator",
+  "%": "is-halfoper",
+  "+": "is-voicer",
+  "": "is-irc",
 };
 
 export function highestMode(
   modes: IrcChannelNicklistGradeSymbolType[],
-): [
-  IrcUIChannelNicklistGradeSymbolType,
-  IrcUIChannelNicklistGradePositionType,
-] {
+): {
+  cssClass: IrcUIChannelNicklistGradeCSSClassType;
+  letter: IrcUINickGradeLetterType;
+  position: IrcUIChannelNicklistGradePositionType;
+  symbol: IrcUIChannelNicklistGradeSymbolType;
+} {
   if (modes.length === 0) {
-    return ["", GradePosition.USER];
+    return {
+      cssClass: GradeCSS.USER,
+      letter: GradeLetter.USER,
+      position: GradePosition.USER,
+      symbol: GradeSymbol.USER,
+    };
   }
 
   const position = modes.reduce((acc, symbol) => {
@@ -134,8 +186,10 @@ export function highestMode(
     return acc;
   }, GradePosition.USER);
   const symbol = positionsSymbols[position];
+  const letter = symbolsLetters[symbol];
+  const cssClass = symbolsClasses[symbol];
 
-  return [symbol, position];
+  return { letter, symbol, cssClass, position };
 }
 
 function compareByNick(
