@@ -6,6 +6,13 @@ context("Form", () => {
   });
 
   it("[web/form/formData]: récupération des données", () => {
+    expect(() => (formData("#lol"))).to.have.throw(
+      `[web/form/formData]: aucun élément n'a été trouvé avec le sélecteur "#lol"`,
+    );
+    expect(() => (formData(document.querySelector("#lol")))).to.have.throw(
+      `[web/form/formData]: il semble que votre argument résulte erroné.`,
+    );
+
     cy.get("#field-a-1").type("coucou", { delay: 100 });
     cy.get("#field-b-1").type("comment", { delay: 100 });
     cy.get("#field-c-1").type("va-t-on ?", { delay: 100 });
