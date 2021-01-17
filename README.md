@@ -516,7 +516,22 @@ Répertoire [deno/](./deno)
 
   - [terminal](./deno/terminal.ts)
     - `clearConsole`(...text: `ARRAY`<`string`>);
+
+      > ```js
+      > clearConsole(":-)");
+      > ```
+
     - `getCommandArgs`();
+
+      Retourne les arguments de la console
+      > ```bash
+      > $ deno run script.ts --foo=bar -f=b foo2 bar2
+      > ```
+
+      > ```js
+      > console.log(getCommandArgs()); // { foo: "bar", "-f": "b", foo2: true, bar2: true }
+      > ```
+
 
 Répertoire [node/](./node)
   - [env](./node/env.ts)

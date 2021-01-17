@@ -5,15 +5,6 @@ export type CommandArgInterface = OBJECT<string | boolean>;
 const { args, isatty, stdin: { rid } } = Deno;
 
 /**
- * @example `script.ts` -> ```js
- *   clearConsole(":-)");
- * ```
- *
- * @example ```shell
- *   $ deno run script.ts
- *   @return {object} :-)
- * ```
- *
  * @param {string[]} text
  */
 export function clearConsole(...text: ARRAY<string>) {
@@ -28,16 +19,6 @@ export function clearConsole(...text: ARRAY<string>) {
   }
 }
 
-/**
- * @example `script.ts` -> ```js
- *   console.log(getCommandArgs());
- * ```
- *
- * @example ```shell
- *   $ deno run script.ts --foo=bar -f=b foo2 bar2
- *   @return {object} { foo: "bar", "-f": "b", foo2: true, bar2: true }
- * ```
- */
 export function getCommandArgs(): CommandArgInterface {
   const mapper = (arg: string): CommandArgInterface => {
     const parts = arg.split("=");
