@@ -3,13 +3,14 @@ import {
   assertThrows,
 } from "https://deno.land/std@0.82.0/testing/asserts.ts";
 
+import type { IrcNickInterface } from "./nick.ts";
+
+import { readFile } from "../deno/fs.ts";
 import { $address } from "./helpers.ts";
 
-const nick1 = {
-  nick: "A02Guxt1",
-  ident: "ec8d6781",
-  host: "gateway/web/dispatch/fake-ip.110.111.110.101",
-};
+const { cwd } = Deno;
+
+const rootDir = cwd() + "/irc/testdata";
 
 const mask1 = [
   "*!ec8d6781@gateway/web/dispatch/fake-ip.110.111.110.101",
@@ -23,12 +24,6 @@ const mask1 = [
   "A02Guxt1!*ec8d6781@*.110.111.110.101",
   "A02Guxt1!*@*.110.111.110.101",
 ];
-
-const nick2 = {
-  nick: "fakenick",
-  ident: "~fakenick",
-  host: "11-122-66-99.dyn.grandenetworks.net",
-};
 
 const mask2 = [
   "*!~fakenick@11-122-66-99.dyn.grandenetworks.net",
@@ -45,7 +40,16 @@ const mask2 = [
 
 Deno.test(
   "[irc/helpers/$address]: base",
-  () => {
+  async () => {
+    const nick1: IrcNickInterface = await readFile(
+      `${rootDir}/nick_1.json`,
+      "json",
+    );
+    const nick2: IrcNickInterface = await readFile(
+      `${rootDir}/nick_2.json`,
+      "json",
+    );
+
     for (let index = 0; index <= 9; index++) {
       const result = $address(nick1, index);
 
@@ -68,7 +72,12 @@ Deno.test(
 
 Deno.test(
   "[irc/helpers/$address]: type inexistant",
-  () => {
+  async () => {
+    const nick1: IrcNickInterface = await readFile(
+      `${rootDir}/nick_1.json`,
+      "json",
+    );
+
     assertThrows(() => $address(nick1, 12));
   },
 );
