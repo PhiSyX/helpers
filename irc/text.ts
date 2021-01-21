@@ -1,7 +1,7 @@
 import type { Nullable } from "../shared/types.d.ts";
 
 import { lastEntry } from "../shared/array.ts";
-import { toString } from "../shared/string.ts";
+import { _upr, toString } from "../shared/string.ts";
 
 export interface TextBlock {
   foreground: Nullable<number>;
@@ -45,7 +45,9 @@ export function format(str: string): Sentence {
   );
 
   const splittedStr = toString(str).split(formatsRE).filter(Boolean);
-  const blocks: TextBlock[] = splittedStr.reduce(setFormat, []);
+  const blocks: TextBlock[] = splittedStr
+    .reduce(setFormat, [])
+    .filter((t) => t.text);
 
   return {
     raw: str,
@@ -151,4 +153,98 @@ function defaultValue(merge: Partial<TextBlock>): TextBlock {
     underline: false,
     ...merge,
   } as TextBlock;
+}
+
+const timeRe = "\\d{4}-\\d{2}-\\d{2}@\\d+:\\d+:\\d+";
+const timeGroup = `^(?<TIME>${timeRe})`;
+const eventRe = "[A-Z][a-z]+";
+const eventGroup = `^(?<EVENT_TIME>${timeRe})\\s(?<EVENT_NAME>${eventRe}):`;
+const nickRe = "[^!\\s<]+![^@\\s]+@[^>\\s]+";
+const nickGroup = `(?<NICK>${nickRe})`;
+const msgRe = "(?:[>].+$)|\\s[:(].+$";
+const msgGroup = `(?<RAW>${msgRe})`;
+
+const regexp = [
+  eventGroup,
+  timeGroup,
+  nickGroup,
+  msgGroup,
+].join("|");
+
+export interface ParseLineNick {
+  nick: string;
+  ident: string;
+  hostname: string;
+}
+
+export interface ParseLineResultInterface {
+  createAt: Date;
+  type: string;
+  message: TextBlock[];
+  nick: ParseLineNick;
+  raw: string;
+  reason: TextBlock[];
+  victim: ParseLineNick;
+}
+
+export function parse(str: string): ParseLineResultInterface {
+  let temp: Partial<ParseLineResultInterface> = {};
+
+  temp.raw = str;
+
+  const matches = str.matchAll(new RegExp(regexp, "gm"));
+
+  for (const match of matches) {
+    const {
+      EVENT_TIME,
+      EVENT_NAME,
+      TIME,
+      NICK,
+      RAW,
+    } = match.groups as {
+      EVENT_TIME?: string;
+      EVENT_NAME?: string;
+      TIME?: string;
+      NICK?: string;
+      RAW?: string;
+    };
+
+    if (EVENT_TIME) {
+      temp.createAt = new Date(EVENT_TIME as string);
+    }
+
+    if (EVENT_NAME) {
+      temp.type = _upr(EVENT_NAME);
+    }
+
+    if (TIME) {
+      temp.createAt = new Date(TIME as string);
+    }
+
+    if (NICK) {
+      if (temp.type === "KICK") {
+        temp.victim = temp.nick;
+      }
+
+      const [nick, ident, hostname] = NICK.trim()
+        .replace(/[<>]/g, "")
+        .split(/[!@]/);
+      temp.nick = {
+        nick,
+        ident,
+        hostname,
+      };
+    }
+
+    if (RAW) {
+      const { formatted: text } = format(RAW.replace(/^>\s|\s:/, "").trim());
+      if (temp.type === "KICK") {
+        temp.reason = text;
+      } else {
+        temp.message = text;
+      }
+    }
+  }
+
+  return temp as ParseLineResultInterface;
 }

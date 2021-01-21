@@ -1,6 +1,9 @@
 import { assertEquals } from "https://deno.land/std@0.82.0/testing/asserts.ts";
+import { readFile } from "../deno/fs.ts";
 
-import { format } from "./text.ts";
+import { format, parse } from "./text.ts";
+
+const testdata = Deno.cwd() + "/irc/testdata";
 
 Deno.test(
   "[irc/text/format]: base",
@@ -286,5 +289,106 @@ Deno.test(
         underline: false,
       },
     ]);
+  },
+);
+
+Deno.test(
+  "irc/text/format: format à la fin",
+  () => {
+    const end = [
+      "\u000314,12Lorem ipsum dolor <strong>lol</strong> sit amet consectetur adipisicing elit. In porro voluptatem quia debitis, exercitationem, laudantium, possimus voluptatum ut beatae sapiente alias? Rem molestiae porro repudiandae amet. Vero pariatur facere veniam.\u000f",
+    ].join("");
+    const { formatted: fend } = format(end);
+    assertEquals(fend, [
+      {
+        background: 12,
+        bold: false,
+        foreground: 14,
+        italic: false,
+        reverse: false,
+        text:
+          "Lorem ipsum dolor <strong>lol</strong> sit amet consectetur adipisicing elit. In porro voluptatem quia debitis, exercitationem, laudantium, possimus voluptatum ut beatae sapiente alias? Rem molestiae porro repudiandae amet. Vero pariatur facere veniam.",
+        underline: false,
+      },
+    ]);
+  },
+);
+
+Deno.test(
+  "[irc/text/parse]: base",
+  async () => {
+    const logsData: string[] = await readFile(
+      testdata + "/logs.json",
+      "json",
+    );
+
+    const logs = logsData.map(parse);
+    assertEquals(logs[0], {
+      raw:
+        "2020-11-01@18:37:50 Modes: NickName!NickIdent@Network-encrypted-host.fai.org : +bb *!*@*encrypted.mob.fai.org *!*NickIdent@*",
+      time: new Date("2020-11-01@18:37:50"),
+      type: "MODES",
+      nick: {
+        nick: "NickName",
+        ident: "NickIdent",
+        hostname: "Network-encrypted-host.fai.org",
+      },
+      message: [
+        {
+          background: 0,
+          bold: false,
+          foreground: 0,
+          italic: false,
+          reverse: false,
+          underline: false,
+          text: "+bb *!*@*encrypted.mob.fai.org *!*NickIdent@*",
+        },
+      ],
+    });
+    assertEquals(logs[5], {
+      raw:
+        "2021-01-21@18:39:40 Kick: fakeNick_2!fakeIdent_2@fake-encrypted.host_2.fai.org par fakeNick!fakeIdent@fake-encrypted.host.fai.org : Demandé \u0002si\u0002 gentiment :)",
+      time: new Date("2021-01-21@18:39:40"),
+      type: "KICK",
+      nick: {
+        nick: "fakeNick",
+        ident: "fakeIdent",
+        hostname: "fake-encrypted.host.fai.org",
+      },
+      victim: {
+        nick: "fakeNick_2",
+        ident: "fakeIdent_2",
+        hostname: "fake-encrypted.host_2.fai.org",
+      },
+      reason: [
+        {
+          background: 0,
+          bold: false,
+          foreground: 0,
+          italic: false,
+          reverse: false,
+          underline: false,
+          text: "Demandé ",
+        },
+        {
+          background: 0,
+          bold: true,
+          foreground: 0,
+          italic: false,
+          reverse: false,
+          underline: false,
+          text: "si",
+        },
+        {
+          background: 0,
+          bold: false,
+          foreground: 0,
+          italic: false,
+          reverse: false,
+          underline: false,
+          text: " gentiment :)",
+        },
+      ],
+    });
   },
 );
