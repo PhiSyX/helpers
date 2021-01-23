@@ -1,21 +1,9 @@
-import {
-  assertEquals,
-  assertThrows,
-} from "https://deno.land/std@0.84.0/testing/asserts.ts";
-
-import {
-  dirname,
-  fromFileUrl,
-  resolve,
-} from "https://deno.land/std@0.84.0/path/mod.ts";
+import { assertEquals, assertThrows, testdataDir } from "../deno/test_mod.ts";
 
 import type { IrcNickInterface } from "./nick.ts";
 
 import { readFile } from "../deno/fs.ts";
 import { $address } from "./helpers.ts";
-
-const moduleDir = dirname(fromFileUrl(import.meta.url));
-const testdataDir = resolve(moduleDir, "testdata");
 
 const mask1 = [
   "*!ec8d6781@gateway/web/dispatch/fake-ip.110.111.110.101",
@@ -47,11 +35,11 @@ Deno.test(
   "[irc/helpers/$address]: base",
   async () => {
     const nick1: IrcNickInterface = await readFile(
-      `${testdataDir}/nick_1.json`,
+      `${testdataDir(import.meta.url)}/nick_1.json`,
       "json",
     );
     const nick2: IrcNickInterface = await readFile(
-      `${testdataDir}/nick_2.json`,
+      `${testdataDir(import.meta.url)}/nick_2.json`,
       "json",
     );
 
@@ -79,7 +67,7 @@ Deno.test(
   "[irc/helpers/$address]: type inexistant",
   async () => {
     const nick1: IrcNickInterface = await readFile(
-      `${testdataDir}/nick_1.json`,
+      `${testdataDir(import.meta.url)}/nick_1.json`,
       "json",
     );
 

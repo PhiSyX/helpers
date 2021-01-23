@@ -1,0 +1,13 @@
+[
+  "2020-11-01@18:37:50 Modes: NickName!NickIdent@Network-encrypted-host.fai.org : +bb *!*@*encrypted.mob.fai.org *!*NickIdent@*",
+  "2021-01-21@18:39:19 Join: fakeNick!fakeIdent@fake-encrypted.host.fai.org",
+  "2021-01-21@18:39:19 Modes: Chan!Serv@services. : +q fakeNick",
+  "2021-01-21@18:39:25 <fakeNick!fakeIdent@fake-encrypted.host.fai.org> bonjour tout le monde, comment ça va ?",
+  "2021-01-21@18:39:30 <fakeNick_2!fakeIdent_2@fake-encrypted.host_2.fai.org> Oh fakeNick, kick moi stp",
+  "2021-01-21@18:39:40 Kick: fakeNick_2!fakeIdent_2@fake-encrypted.host_2.fai.org par fakeNick!fakeIdent@fake-encrypted.host.fai.org : Demandé \u0002si\u0002 gentiment :)",
+  "2021-01-21@18:40:00 Part: fakeNick!fakeIdent@fake-encrypted.host.fai.org",
+  "2021-01-21@18:40:43 Join: fakeNick_2!fakeIdent_2@fake-encrypted.host_2.fai.org",
+  "2021-01-21@18:40:44 <fakeNick_2!fakeIdent_2@fake-encrypted.host_2.fai.org> :|",
+  "2021-01-21@18:40:46 <fakeNick_2!fakeIdent_2@fake-encrypted.host_2.fai.org> il est passé où fakeNick?",
+  "2021-01-21@18:41:50 Quit: fakeNick_2!fakeIdent_2@fake-encrypted.host_2.fai.org (Quit: Client Quit)"
+]

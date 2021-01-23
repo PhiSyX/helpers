@@ -1,13 +1,8 @@
 import {
   assertEquals,
   assertNotEquals,
-} from "https://deno.land/std@0.84.0/testing/asserts.ts";
-
-import {
-  dirname,
-  fromFileUrl,
-  resolve,
-} from "https://deno.land/std@0.84.0/path/mod.ts";
+  testdataDir,
+} from "../deno/test_mod.ts";
 
 import { readFile } from "../deno/fs.ts";
 import {
@@ -15,14 +10,11 @@ import {
   orderNicklist,
 } from "./channel_nicklist.ts";
 
-const moduleDir = dirname(fromFileUrl(import.meta.url));
-const testdataDir = resolve(moduleDir, "testdata");
-
 Deno.test(
   "[irc/channel_nicklist/orderNicklist]: base",
   async () => {
     const fakeNicklist: IrcChannelNicklistInterface[] = await readFile(
-      `${testdataDir}/nicklist.json`,
+      `${testdataDir(import.meta.url)}/nicklist.json`,
       "json",
     );
 
@@ -45,7 +37,7 @@ Deno.test(
   "[irc/channel_nicklist/orderNicklist]: filtered",
   async () => {
     const fakeNicklist: IrcChannelNicklistInterface[] = await readFile(
-      `${testdataDir}/nicklist_filtered.json`,
+      `${testdataDir(import.meta.url)}/nicklist_filtered.json`,
       "json",
     );
 

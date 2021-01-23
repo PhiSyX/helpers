@@ -1,16 +1,8 @@
-import { assertEquals } from "https://deno.land/std@0.84.0/testing/asserts.ts";
-import {
-  dirname,
-  fromFileUrl,
-  resolve,
-} from "https://deno.land/std@0.84.0/path/mod.ts";
+import { assertEquals, testdataDir } from "../deno/test_mod.ts";
 
 import { readFile } from "../deno/fs.ts";
 
 import { format, parse } from "./text.ts";
-
-const moduleDir = dirname(fromFileUrl(import.meta.url));
-const testdataDir = resolve(moduleDir, "testdata");
 
 Deno.test(
   "[irc/text/format]: base",
@@ -325,7 +317,7 @@ Deno.test(
   "[irc/text/parse]: base",
   async () => {
     const logsData: string[] = await readFile(
-      testdataDir + "/logs.json",
+      testdataDir(import.meta.url) + "/logs.json",
       "json",
     );
 

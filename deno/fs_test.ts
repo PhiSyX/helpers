@@ -1,26 +1,14 @@
-import {
-  assertEquals,
-  assertThrowsAsync,
-} from "https://deno.land/std@0.84.0/testing/asserts.ts";
-
-import {
-  dirname,
-  fromFileUrl,
-  resolve,
-} from "https://deno.land/std@0.84.0/path/mod.ts";
+import { assertEquals, assertThrowsAsync, testdataDir } from "./test_mod.ts";
 
 import type { FileJSONInterface } from "./testdata/file.d.ts";
 
 import { readFile } from "./fs.ts";
 
-const moduleDir = dirname(fromFileUrl(import.meta.url));
-const testdataDir = resolve(moduleDir, "testdata");
-
 Deno.test(
   "[deno/fs/readFile]: fichier JSON retourne un object JSON (et non une string)",
   async () => {
     const json: Partial<FileJSONInterface> = await readFile(
-      `${testdataDir}/file.json`,
+      `${testdataDir(import.meta.url)}/file.json`,
       "json",
     );
 
@@ -34,7 +22,7 @@ Deno.test(
   async () => {
     assertThrowsAsync(async () =>
       await readFile(
-        `${testdataDir}/files.json`,
+        `${testdataDir(import.meta.url)}/files.json`,
         "json",
       )
     );
