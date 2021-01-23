@@ -3,7 +3,7 @@ import {
   assertMatch,
   assertNotMatch,
   assertThrows,
-} from "https://deno.land/std@0.82.0/testing/asserts.ts";
+} from "https://deno.land/std@0.84.0/testing/asserts.ts";
 
 import {
   capitalize,

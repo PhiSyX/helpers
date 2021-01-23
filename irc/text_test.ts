@@ -1,9 +1,16 @@
-import { assertEquals } from "https://deno.land/std@0.82.0/testing/asserts.ts";
+import { assertEquals } from "https://deno.land/std@0.84.0/testing/asserts.ts";
+import {
+  dirname,
+  fromFileUrl,
+  resolve,
+} from "https://deno.land/std@0.84.0/path/mod.ts";
+
 import { readFile } from "../deno/fs.ts";
 
 import { format, parse } from "./text.ts";
 
-const testdata = Deno.cwd() + "/irc/testdata";
+const moduleDir = dirname(fromFileUrl(import.meta.url));
+const testdataDir = resolve(moduleDir, "testdata");
 
 Deno.test(
   "[irc/text/format]: base",
@@ -318,7 +325,7 @@ Deno.test(
   "[irc/text/parse]: base",
   async () => {
     const logsData: string[] = await readFile(
-      testdata + "/logs.json",
+      testdataDir + "/logs.json",
       "json",
     );
 
@@ -326,7 +333,7 @@ Deno.test(
     assertEquals(logs[0], {
       raw:
         "2020-11-01@18:37:50 Modes: NickName!NickIdent@Network-encrypted-host.fai.org : +bb *!*@*encrypted.mob.fai.org *!*NickIdent@*",
-      time: new Date("2020-11-01@18:37:50"),
+      createdAt: new Date("2020-11-01@18:37:50"),
       type: "MODES",
       nick: {
         nick: "NickName",
@@ -348,7 +355,7 @@ Deno.test(
     assertEquals(logs[5], {
       raw:
         "2021-01-21@18:39:40 Kick: fakeNick_2!fakeIdent_2@fake-encrypted.host_2.fai.org par fakeNick!fakeIdent@fake-encrypted.host.fai.org : Demandé \u0002si\u0002 gentiment :)",
-      time: new Date("2021-01-21@18:39:40"),
+      createdAt: new Date("2021-01-21@18:39:40"),
       type: "KICK",
       nick: {
         nick: "fakeNick",

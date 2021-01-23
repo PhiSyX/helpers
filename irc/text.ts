@@ -178,7 +178,7 @@ export interface ParseLineNick {
 }
 
 export interface ParseLineResultInterface {
-  createAt: Date;
+  createdAt: Date;
   type: string;
   message: TextBlock[];
   nick: ParseLineNick;
@@ -210,7 +210,7 @@ export function parse(str: string): ParseLineResultInterface {
     };
 
     if (EVENT_TIME) {
-      temp.createAt = new Date(EVENT_TIME as string);
+      temp.createdAt = new Date(EVENT_TIME as string);
     }
 
     if (EVENT_NAME) {
@@ -218,7 +218,7 @@ export function parse(str: string): ParseLineResultInterface {
     }
 
     if (TIME) {
-      temp.createAt = new Date(TIME as string);
+      temp.createdAt = new Date(TIME as string);
     }
 
     if (NICK) {
