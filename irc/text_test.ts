@@ -2,7 +2,13 @@ import { assertEquals, testdataDir } from "../deno/test_mod.ts";
 
 import { readFile } from "../deno/fs.ts";
 
-import { format, parse } from "./text.ts";
+import { format, parse, TextBlock } from "./text.ts";
+
+// ! FIXME : utilisez un système de mock, stub, spy
+const formatMap = (b: TextBlock) => {
+  const id = "my-id";
+  return { ...b, id };
+};
 
 Deno.test(
   "[irc/text/format]: base",
@@ -11,8 +17,9 @@ Deno.test(
       "\u0002je suis un texte en gras",
     ].join("");
     const { formatted: fbold } = format(bold);
-    assertEquals(fbold, [
+    assertEquals(fbold.map(formatMap), [
       {
+        id: "my-id",
         background: 0,
         bold: true,
         foreground: 0,
@@ -25,8 +32,9 @@ Deno.test(
 
     const italic = ["\u001Dje suis un texte en italique"].join("");
     const { formatted: fitalic } = format(italic);
-    assertEquals(fitalic, [
+    assertEquals(fitalic.map(formatMap), [
       {
+        id: "my-id",
         background: 0,
         bold: false,
         foreground: 0,
@@ -39,8 +47,9 @@ Deno.test(
 
     const underline = ["\u001Fje suis un texte en souligné"].join("");
     const { formatted: funderline } = format(underline);
-    assertEquals(funderline, [
+    assertEquals(funderline.map(formatMap), [
       {
+        id: "my-id",
         background: 0,
         bold: false,
         foreground: 0,
@@ -53,8 +62,9 @@ Deno.test(
 
     const reverse = ["je suis un \u0016texte en reverse\u0016 :-)"].join("");
     const { formatted: freverse } = format(reverse);
-    assertEquals(freverse, [
+    assertEquals(freverse.map(formatMap), [
       {
+        id: "my-id",
         background: 0,
         bold: false,
         foreground: 0,
@@ -64,6 +74,7 @@ Deno.test(
         underline: false,
       },
       {
+        id: "my-id",
         background: 0,
         bold: false,
         foreground: 0,
@@ -73,6 +84,7 @@ Deno.test(
         underline: false,
       },
       {
+        id: "my-id",
         background: 0,
         bold: false,
         foreground: 0,
@@ -85,8 +97,9 @@ Deno.test(
 
     const colorFG = ["\u000312je suis un texte en couleur 12"].join("");
     const { formatted: fcolorFG } = format(colorFG);
-    assertEquals(fcolorFG, [
+    assertEquals(fcolorFG.map(formatMap), [
       {
+        id: "my-id",
         background: 0,
         bold: false,
         foreground: 12,
@@ -99,8 +112,9 @@ Deno.test(
 
     const colorBG = ["\u000312,04je suis un texte en couleur 12,04"].join("");
     const { formatted: fcolorBG } = format(colorBG);
-    assertEquals(fcolorBG, [
+    assertEquals(fcolorBG.map(formatMap), [
       {
+        id: "my-id",
         background: 4,
         bold: false,
         foreground: 12,
@@ -115,8 +129,9 @@ Deno.test(
       "\u0002je suis un texte en gras.\u000F Mais ce texte est normal",
     ].join("");
     const { formatted: freset } = format(reset);
-    assertEquals(freset, [
+    assertEquals(freset.map(formatMap), [
       {
+        id: "my-id",
         background: 0,
         bold: true,
         foreground: 0,
@@ -126,6 +141,7 @@ Deno.test(
         underline: false,
       },
       {
+        id: "my-id",
         background: 0,
         bold: false,
         foreground: 0,
@@ -145,8 +161,9 @@ Deno.test(
       "\u0001PING 1473523796 918320\u0001",
     ].join("");
     const { formatted: fping } = format(ping);
-    assertEquals(fping, [
+    assertEquals(fping.map(formatMap), [
       {
+        id: "my-id",
         background: 0,
         bold: false,
         foreground: 0,
@@ -169,8 +186,9 @@ Deno.test(
     ].join("");
 
     const { formatted: fsujet } = format(sujet);
-    assertEquals(fsujet, [
+    assertEquals(fsujet.map(formatMap), [
       {
+        id: "my-id",
         background: 0,
         bold: false,
         foreground: 0,
@@ -180,6 +198,7 @@ Deno.test(
         underline: false,
       },
       {
+        id: "my-id",
         background: 4,
         bold: false,
         foreground: 4,
@@ -189,6 +208,7 @@ Deno.test(
         underline: false,
       },
       {
+        id: "my-id",
         background: 4,
         bold: false,
         foreground: 4,
@@ -198,6 +218,7 @@ Deno.test(
         underline: true,
       },
       {
+        id: "my-id",
         background: 4,
         bold: true,
         foreground: 4,
@@ -207,6 +228,7 @@ Deno.test(
         underline: true,
       },
       {
+        id: "my-id",
         background: 4,
         bold: true,
         foreground: 4,
@@ -216,6 +238,7 @@ Deno.test(
         underline: false,
       },
       {
+        id: "my-id",
         background: 4,
         bold: true,
         foreground: 4,
@@ -225,6 +248,7 @@ Deno.test(
         underline: false,
       },
       {
+        id: "my-id",
         background: 4,
         bold: false,
         foreground: 4,
@@ -234,6 +258,7 @@ Deno.test(
         underline: false,
       },
       {
+        id: "my-id",
         background: 5,
         bold: false,
         foreground: 8,
@@ -243,6 +268,7 @@ Deno.test(
         underline: false,
       },
       {
+        id: "my-id",
         background: 5,
         bold: false,
         foreground: 8,
@@ -252,6 +278,7 @@ Deno.test(
         underline: false,
       },
       {
+        id: "my-id",
         background: 5,
         bold: false,
         foreground: 8,
@@ -261,6 +288,7 @@ Deno.test(
         underline: false,
       },
       {
+        id: "my-id",
         background: 0,
         bold: false,
         foreground: 10,
@@ -270,6 +298,7 @@ Deno.test(
         underline: false,
       },
       {
+        id: "my-id",
         background: 0,
         bold: false,
         foreground: 10,
@@ -279,6 +308,7 @@ Deno.test(
         underline: false,
       },
       {
+        id: "my-id",
         background: 0,
         bold: false,
         foreground: 0,
@@ -298,8 +328,9 @@ Deno.test(
       "\u000314,12Lorem ipsum dolor <strong>lol</strong> sit amet consectetur adipisicing elit. In porro voluptatem quia debitis, exercitationem, laudantium, possimus voluptatum ut beatae sapiente alias? Rem molestiae porro repudiandae amet. Vero pariatur facere veniam.\u000f",
     ].join("");
     const { formatted: fend } = format(end);
-    assertEquals(fend, [
+    assertEquals(fend.map(formatMap), [
       {
+        id: "my-id",
         background: 12,
         bold: false,
         foreground: 14,
@@ -322,6 +353,8 @@ Deno.test(
     );
 
     const logs = logsData.map(parse);
+    logs[0].message = logs[0].message.map(formatMap);
+    logs[5].reason = logs[5].reason.map(formatMap);
     assertEquals(logs[0], {
       raw:
         "2020-11-01@18:37:50 Modes: NickName!NickIdent@Network-encrypted-host.fai.org : +bb *!*@*encrypted.mob.fai.org *!*NickIdent@*",
@@ -334,6 +367,7 @@ Deno.test(
       },
       message: [
         {
+          id: "my-id",
           background: 0,
           bold: false,
           foreground: 0,
@@ -361,6 +395,7 @@ Deno.test(
       },
       reason: [
         {
+          id: "my-id",
           background: 0,
           bold: false,
           foreground: 0,
@@ -370,6 +405,7 @@ Deno.test(
           text: "Demandé ",
         },
         {
+          id: "my-id",
           background: 0,
           bold: true,
           foreground: 0,
@@ -379,6 +415,7 @@ Deno.test(
           text: "si",
         },
         {
+          id: "my-id",
           background: 0,
           bold: false,
           foreground: 0,

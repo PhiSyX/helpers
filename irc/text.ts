@@ -1,9 +1,10 @@
-import type { Nullable } from "../shared/types.d.ts";
+import type { ID, Nullable } from "../shared/types.d.ts";
 
 import { lastEntry } from "../shared/array.ts";
-import { _upr, toString } from "../shared/string.ts";
+import { _upr, toString, uuid } from "../shared/string.ts";
 
 export interface TextBlock {
+  id: ID;
   foreground: Nullable<number>;
   background: Nullable<number>;
   bold: boolean;
@@ -145,6 +146,7 @@ function setFormat(acc: any, part: string): TextBlock[] {
 
 function defaultValue(merge: Partial<TextBlock>): TextBlock {
   return {
+    id: uuid(),
     foreground: 0,
     background: 0,
     bold: false,
