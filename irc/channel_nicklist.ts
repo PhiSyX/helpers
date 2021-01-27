@@ -1,7 +1,8 @@
-import type { IrcNickInterface } from "./nick.ts";
+import { IrcNick, IrcNickInterface } from "./nick.ts";
 
-import { _lwr } from "../shared/string.ts";
+import { _lwr, escapeRegExp } from "../shared/string.ts";
 import { OBJECT } from "../shared/types.d.ts";
+import { chunkArray } from "../shared/array.ts";
 
 // !!!!!!!!! //
 // ! TYPES ! //
@@ -9,7 +10,7 @@ import { OBJECT } from "../shared/types.d.ts";
 
 // ?         ::   IRC Channel Nicklist
 
-export interface IrcChannelNicklistInterface {
+export interface IrcChannelNickInterface {
   /**
    * Les modes de salon d'un pseudo
    */
@@ -19,6 +20,11 @@ export interface IrcChannelNicklistInterface {
    * Utilisateur
    */
   nick: IrcNickInterface;
+}
+
+export class IrcChannelNick implements IrcChannelNickInterface {
+  modes: IrcChannelNicklistGradeSymbolType[] = [];
+  nick!: IrcNickInterface;
 }
 
 export type IrcChannelNicklistGradeSymbolType =
@@ -96,10 +102,10 @@ export enum GradePosition {
   USER = 99,
 }
 
-export function orderNicklist(nicks: IrcChannelNicklistInterface[]) {
+export function orderNicklist(nicks: IrcChannelNickInterface[]) {
   function handleSort(
-    ircChannelNick1: IrcChannelNicklistInterface,
-    ircChannelNick2: IrcChannelNicklistInterface,
+    ircChannelNick1: IrcChannelNickInterface,
+    ircChannelNick2: IrcChannelNickInterface,
   ) {
     // @ts-expect-error
     const { filter: filter1, modes: modes1, nick: nick1 } = ircChannelNick1;
@@ -199,4 +205,55 @@ function compareByNick(
   const { nick: nick1 } = ircNick1;
   const { nick: nick2 } = ircNick2;
   return _lwr(nick1) < _lwr(nick2) ? -1 : 1;
+}
+
+export function parseNick(
+  fullAddress: string,
+): IrcChannelNickInterface[][] {
+  const re = /(?<NICK>[^!]*)!(?<IDENT>[^@]*)@(?<HOSTNAME>[^\s]*)/g;
+  const matches = fullAddress.matchAll(re);
+
+  let temp: IrcChannelNickInterface[] = [];
+
+  for (const match of matches) {
+    const groups = match.groups as {
+      NICK: string;
+      IDENT: string;
+      HOSTNAME: string;
+    };
+
+    const chanNick = new IrcChannelNick();
+
+    const nick = new IrcNick();
+    nick.nick = groups.NICK;
+    nick.ident = groups.IDENT;
+    nick.hostname = groups.HOSTNAME;
+
+    chanNick.modes = prefixNick(groups.NICK.trim());
+    chanNick.nick = nick;
+
+    temp = [...temp, chanNick];
+  }
+
+  return chunkArray(orderNicklist(temp), 250);
+}
+
+export function prefixNick(nick: string): IrcChannelNicklistGradeSymbolType[] {
+  const re = [
+    escapeRegExp(GradeSymbol.OWNER),
+    escapeRegExp(GradeSymbol.PROTECTOR),
+    escapeRegExp(GradeSymbol.OPERATOR),
+    escapeRegExp(GradeSymbol.HALFOPER),
+    escapeRegExp(GradeSymbol.VOICER),
+  ].join("|");
+
+  const matches = nick.matchAll(new RegExp(re, "g"));
+
+  let prefixes: IrcChannelNicklistGradeSymbolType[] = [];
+  for (const match of matches) {
+    const [prefix] = match as IrcChannelNicklistGradeSymbolType[];
+    prefixes = [...prefixes, prefix];
+  }
+
+  return prefixes;
 }

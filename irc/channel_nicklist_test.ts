@@ -5,15 +5,12 @@ import {
 } from "../deno/test_mod.ts";
 
 import { readFile } from "../deno/fs.ts";
-import {
-  IrcChannelNicklistInterface,
-  orderNicklist,
-} from "./channel_nicklist.ts";
+import { IrcChannelNickInterface, orderNicklist } from "./channel_nicklist.ts";
 
 Deno.test(
   "[irc/channel_nicklist/orderNicklist]: base",
   async () => {
-    const fakeNicklist: IrcChannelNicklistInterface[] = await readFile(
+    const fakeNicklist: IrcChannelNickInterface[] = await readFile(
       `${testdataDir(import.meta.url)}/nicklist.json`,
       "json",
     );
@@ -36,7 +33,7 @@ Deno.test(
 Deno.test(
   "[irc/channel_nicklist/orderNicklist]: filtered",
   async () => {
-    const fakeNicklist: IrcChannelNicklistInterface[] = await readFile(
+    const fakeNicklist: IrcChannelNickInterface[] = await readFile(
       `${testdataDir(import.meta.url)}/nicklist_filtered.json`,
       "json",
     );

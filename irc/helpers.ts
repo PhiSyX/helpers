@@ -1,3 +1,4 @@
+import type { IrcNickAddress } from "./nick.ts";
 import { iswm } from "../shared/lang.ts";
 
 export const isChan = (name: string) => /^#[^:]+$/.test(name);
@@ -11,12 +12,6 @@ export const isAway = (nick: string) =>
 export const isBusy = (nick: string) =>
   iswm(nick, "*[occupe*]") ||
   iswm(nick, "*[busy]");
-
-interface IrcNickAddress {
-  ident: string;
-  host: string;
-  nick: string;
-}
 
 /**
  * @param {number} type @returns
@@ -32,10 +27,10 @@ interface IrcNickAddress {
  *    @type 9 -> "nick!*@*.hostname"
  */
 export function $address(
-  { nick, ident, host }: IrcNickAddress,
+  { nick, ident, hostname }: IrcNickAddress,
   type: number,
 ): string {
-  let temp = nick + "!" + ident + "@" + host;
+  let temp = nick + "!" + ident + "@" + hostname;
 
   switch (type) {
     case 0:

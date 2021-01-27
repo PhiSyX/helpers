@@ -1,5 +1,19 @@
-{
-  "nick": "fakenick",
-  "ident": "~fakenick",
-  "host": "11-122-66-99.dyn.grandenetworks.net"
-}
+[
+  {
+    "nick": "fakenick",
+    "ident": "~fakenick",
+    "hostname": "11-122-66-99.dyn.grandenetworks.net"
+  },
+  [
+    "*!~fakenick@11-122-66-99.dyn.grandenetworks.net",
+    "*!*fakenick@11-122-66-99.dyn.grandenetworks.net",
+    "*!*@11-122-66-99.dyn.grandenetworks.net",
+    "*!*fakenick@*.dyn.grandenetworks.net",
+    "*!*@*.dyn.grandenetworks.net",
+    "fakenick!~fakenick@11-122-66-99.dyn.grandenetworks.net",
+    "fakenick!*fakenick@11-122-66-99.dyn.grandenetworks.net",
+    "fakenick!*@11-122-66-99.dyn.grandenetworks.net",
+    "fakenick!*fakenick@*.dyn.grandenetworks.net",
+    "fakenick!*@*.dyn.grandenetworks.net"
+  ]
+]

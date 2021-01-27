@@ -1,11 +1,12 @@
-import { assertEquals, testdataDir } from "../deno/test_mod.ts";
+import type { FIXME } from "../shared/types.d.ts";
 
-import { readFile } from "../deno/fs.ts";
+import { assertEquals, assertNotEquals } from "../deno/test_mod.ts";
 
-import { format, parse, TextBlock } from "./text.ts";
+import { format, parse } from "./text.ts";
+import { IrcNick } from "./nick.ts";
 
 // ! FIXME : utilisez un système de mock, stub, spy
-const formatMap = (b: TextBlock) => {
+const formatMap = (b: FIXME) => {
   const id = "my-id";
   return { ...b, id };
 };
@@ -322,7 +323,7 @@ Deno.test(
 );
 
 Deno.test(
-  "irc/text/format: format à la fin",
+  "[irc/text/format]: format à la fin",
   () => {
     const end = [
       "\u000314,12Lorem ipsum dolor <strong>lol</strong> sit amet consectetur adipisicing elit. In porro voluptatem quia debitis, exercitationem, laudantium, possimus voluptatum ut beatae sapiente alias? Rem molestiae porro repudiandae amet. Vero pariatur facere veniam.\u000f",
@@ -345,86 +346,178 @@ Deno.test(
 );
 
 Deno.test(
-  "[irc/text/parse]: base",
-  async () => {
-    const logsData: string[] = await readFile(
-      testdataDir(import.meta.url) + "/logs.json",
-      "json",
-    );
+  "[irc/text/parse]: RPL,ERR",
+  () => {
+    const raw =
+      ":irc.local.web 001 PhiSyX :Welcome to the LocalWEB IRC Network PhiSyX!PhiSyX@localhost";
+    const echo = [parse(raw)].map(formatMap);
 
-    const logs = logsData.map(parse);
-    logs[0].message = logs[0].message.map(formatMap);
-    logs[5].reason = logs[5].reason.map(formatMap);
-    assertEquals(logs[0], {
-      raw:
-        "2020-11-01@18:37:50 Modes: NickName!NickIdent@Network-encrypted-host.fai.org : +bb *!*@*encrypted.mob.fai.org *!*NickIdent@*",
-      createdAt: new Date("2020-11-01@18:37:50"),
-      type: "MODES",
-      nick: {
-        nick: "NickName",
-        ident: "NickIdent",
-        hostname: "Network-encrypted-host.fai.org",
-      },
-      message: [
-        {
-          id: "my-id",
-          background: 0,
-          bold: false,
-          foreground: 0,
-          italic: false,
-          reverse: false,
-          underline: false,
-          text: "+bb *!*@*encrypted.mob.fai.org *!*NickIdent@*",
-        },
+    assertEquals(echo, [{
+      id: "my-id",
+      raw: raw,
+      receivedAt: new Date(),
+      prefix: "irc.local.web",
+      type: "RPL_WELCOME",
+      args: [
+        "PhiSyX",
+        "Welcome to the LocalWEB IRC Network PhiSyX!PhiSyX@localhost",
       ],
-    });
-    assertEquals(logs[5], {
-      raw:
-        "2021-01-21@18:39:40 Kick: fakeNick_2!fakeIdent_2@fake-encrypted.host_2.fai.org par fakeNick!fakeIdent@fake-encrypted.host.fai.org : Demandé \u0002si\u0002 gentiment :)",
-      createdAt: new Date("2021-01-21@18:39:40"),
-      type: "KICK",
-      nick: {
-        nick: "fakeNick",
-        ident: "fakeIdent",
-        hostname: "fake-encrypted.host.fai.org",
-      },
-      victim: {
-        nick: "fakeNick_2",
-        ident: "fakeIdent_2",
-        hostname: "fake-encrypted.host_2.fai.org",
-      },
-      reason: [
-        {
-          id: "my-id",
-          background: 0,
-          bold: false,
-          foreground: 0,
-          italic: false,
-          reverse: false,
-          underline: false,
-          text: "Demandé ",
-        },
-        {
-          id: "my-id",
-          background: 0,
-          bold: true,
-          foreground: 0,
-          italic: false,
-          reverse: false,
-          underline: false,
-          text: "si",
-        },
-        {
-          id: "my-id",
-          background: 0,
-          bold: false,
-          foreground: 0,
-          italic: false,
-          reverse: false,
-          underline: false,
-          text: " gentiment :)",
-        },
+    }]);
+
+    const raw2 =
+      ":irc.local.web 005 PhiSyX AWAYLEN=307 BOT=B CASEMAPPING=ascii CHANLIMIT=#:10 CHANMODES=beI,kLf,lH,psmntirzMQNRTOVKDdGPZSCc CHANNELLEN=32 CHANTYPES=# CLIENTTAGDENY=*,-draft/typing,-typing DEAF=d ELIST=MNUCT EXCEPTS EXTBAN=~,GptmTSOcarnqjf :are supported by this server";
+    const echo2 = [parse(raw2)].map(formatMap);
+
+    assertEquals(echo2, [{
+      id: "my-id",
+      raw: raw2,
+      receivedAt: new Date(),
+      prefix: "irc.local.web",
+      type: "RPL_ISUPPORT",
+      args: [
+        "PhiSyX",
+        "AWAYLEN=307",
+        "BOT=B",
+        "CASEMAPPING=ascii",
+        "CHANLIMIT=#:10",
+        "CHANMODES=beI,kLf,lH,psmntirzMQNRTOVKDdGPZSCc",
+        "CHANNELLEN=32",
+        "CHANTYPES=#",
+        "CLIENTTAGDENY=*,-draft/typing,-typing",
+        "DEAF=d",
+        "ELIST=MNUCT",
+        "EXCEPTS",
+        "EXTBAN=~,GptmTSOcarnqjf",
+        "are supported by this server",
       ],
-    });
+    }]);
+  },
+);
+
+Deno.test(
+  "[irc/text/parse]: JOIN TYPE",
+  () => {
+    const raw =
+      "@time=2021-01-27T18:23:33.370Z;msgid=jeX5MdBcijcvuGhjtRrZMv-ZMjIgxkygJW6Z5Vlgt//jA :PhiSyX!PhiSyX@iBug-DB07A864 JOIN #iBug * :WebSocket User";
+    const echo = parse(raw);
+
+    assertEquals(echo.type, "JOIN");
+    assertEquals(echo.target, "#iBug");
+    assertEquals(echo.nick instanceof IrcNick, true);
+    assertEquals(echo.nick.nick, "PhiSyX");
+    assertEquals(echo.nick.realname.raw, "WebSocket User");
+  },
+);
+
+Deno.test(
+  "[irc/text/parse]: PART TYPE",
+  () => {
+    const raw =
+      "@time=2021-01-27T27T18:46:09.437Z;msgid=ND8D1HvMainMIrTvhL9w4J-9NKoGTlw2e9RpOMPqf6iRg :PhiSyX!PhiSyX@iBug-DB07A864 PART #iBug";
+
+    const echo = parse(raw);
+
+    assertEquals(echo.type, "PART");
+    assertEquals(echo.target, "#iBug");
+    assertEquals(echo.reason.raw, "");
+
+    const raw2 =
+      "@time=2021-01-27T27T18:46:09.437Z;msgid=ND8D1HvMainMIrTvhL9w4J-9NKoGTlw2e9RpOMPqf6iRg :PhiSyX!PhiSyX@iBug-DB07A864 PART #iBug :avec une raison particulière?";
+    const echo2 = parse(raw2);
+    assertNotEquals(echo2.reason.raw, "");
+    assertEquals(echo2.reason.raw, "avec une raison particulière?");
+  },
+);
+
+Deno.test(
+  "[irc/text/parse]: MODE TYPE",
+  () => {
+    const raw =
+      "@time=2021-01-27T18:23:33.370Z;msgid=jeX5MdBcijcvuGhjtRrZMv-ftGu6IxyHLVXjRJRm3QQuQ :irc.local.web MODE #iBug +nt";
+    const echo = parse(raw);
+
+    assertEquals(echo.type, "MODE");
+    assertNotEquals(echo.type, "JOIN");
+
+    assertEquals(echo.args, ["+nt"]);
+    assertEquals(echo.nick?.realname, undefined);
+
+    const raw2 =
+      "@time=2021-01-27T18:53:53.201Z;msgid=LDh81On1sFXbYHnbmj7lhN :僕はMiku!PhiSyX@netadmin.example.org MODE #iBug +v 僕はMiku";
+    const echo2 = parse(raw2);
+    assertEquals(echo2.type, "MODE");
+
+    assertEquals(echo2.args, ["+v", "僕はMiku"]);
+    assertEquals(echo2.nick.realname, undefined);
+
+    const raw3 =
+      "@time=2021-01-27T18:57:51.251Z;msgid=siM9scudjiWVFqZoOuQVOa :PhiSyX!PhiSyX@iBug-DB07A864 MODE #ibug +bb *!*foo*@* *!*bar*@*";
+    const echo3 = parse(raw3);
+    assertEquals(echo3.args, ["+bb", "*!*foo*@*", "*!*bar*@*"]);
+  },
+);
+
+Deno.test(
+  "[irc/text/parse]: KICK",
+  () => {
+    const raw =
+      "@time=2021-01-27T18:51:17.818Z;msgid=r3RidAvCFMDIfoB0EPKaWg-o02ggQ5LaalsNtfea1sA9g :僕はMiku!PhiSyX@netadmin.example.org KICK #iBug Jefaisuntest :Dehors !";
+    const echo = parse(raw);
+
+    assertEquals(echo.type, "KICK");
+    assertEquals(echo.victim, "Jefaisuntest");
+    assertEquals(echo.nick.nick, "僕はMiku");
+    assertEquals(echo.reason.raw, "Dehors !");
+  },
+);
+
+Deno.test(
+  "[irc/text/parse]: PRIVMSG",
+  () => {
+    const raw =
+      "@time=2021-01-27T18:25:02.040Z;msgid=SdhqVrx2ryc7xESS8P0r3p :僕はMiku!PhiSyX@netadmin.example.org PRIVMSG Pseudo :salut à tous :)";
+    const echo = parse(raw);
+
+    assertEquals(echo.type, "PRIVMSG");
+
+    assertEquals(echo.target, "Pseudo");
+    assertNotEquals(echo.target, "#iBug");
+
+    assertEquals(echo.nick.nick, "僕はMiku");
+    assertEquals(echo.message.raw, "salut à tous :)");
+  },
+);
+
+Deno.test(
+  "[irc/text/parse]: TOPIC",
+  () => {
+    const raw =
+      "@time=2021-01-27T18:09:19.337Z;msgid=SiCzdPygaGoToMz8Jg9gLS :lol!PhiSyX@netadmin.example.org TOPIC #foo :bar";
+    const echo = parse(raw);
+
+    assertEquals(echo.type, "TOPIC");
+    assertEquals(echo.target, "#foo");
+    assertEquals(echo.topic.raw, "bar");
+
+    // sans log d'ircop
+    assertEquals(echo.nick.userhost, null);
+    assertEquals(echo.nick.userip, null);
+  },
+);
+
+Deno.test(
+  "[irc/text/parse]: IRCop data",
+  () => {
+    const raw =
+      "@unrealircd.org/userhost=PhiSyX@localhost;unrealircd.org/userip=PhiSyX@127.0.0.1;time=2021-01-27T18:09:19.337Z;msgid=SiCzdPygaGoToMz8Jg9gLS :lol!PhiSyX@netadmin.example.org TOPIC #foo :bar";
+    const echo = parse(raw);
+
+    assertEquals(echo.type, "TOPIC");
+    assertEquals(echo.target, "#foo");
+    assertEquals(echo.topic.raw, "bar");
+
+    // avec log d'ircop
+    assertEquals(echo.nick.userhost, "PhiSyX@localhost");
+    assertEquals(echo.nick.userip, "PhiSyX@127.0.0.1");
   },
 );

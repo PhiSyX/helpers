@@ -1,5 +1,19 @@
-{
-  "nick": "A02Guxt1",
-  "ident": "ec8d6781",
-  "host": "gateway/web/dispatch/fake-ip.110.111.110.101"
-}
+[
+  {
+    "nick": "A02Guxt1",
+    "ident": "ec8d6781",
+    "hostname": "gateway/web/dispatch/fake-ip.110.111.110.101"
+  },
+  [
+    "*!ec8d6781@gateway/web/dispatch/fake-ip.110.111.110.101",
+    "*!*ec8d6781@gateway/web/dispatch/fake-ip.110.111.110.101",
+    "*!*@gateway/web/dispatch/fake-ip.110.111.110.101",
+    "*!*ec8d6781@*.110.111.110.101",
+    "*!*@*.110.111.110.101",
+    "A02Guxt1!ec8d6781@gateway/web/dispatch/fake-ip.110.111.110.101",
+    "A02Guxt1!*ec8d6781@gateway/web/dispatch/fake-ip.110.111.110.101",
+    "A02Guxt1!*@gateway/web/dispatch/fake-ip.110.111.110.101",
+    "A02Guxt1!*ec8d6781@*.110.111.110.101",
+    "A02Guxt1!*@*.110.111.110.101"
+  ]
+]

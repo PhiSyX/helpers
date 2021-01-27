@@ -1,7 +1,13 @@
-import type { ID, Nullable } from "../shared/types.d.ts";
+import type { ID, Nullable, WHATEVER } from "../shared/types.d.ts";
+import type { IrcNickInterface } from "./nick.ts";
 
 import { lastEntry } from "../shared/array.ts";
-import { _upr, toString, uuid } from "../shared/string.ts";
+import { _lwr, _upr, hash, toString } from "../shared/string.ts";
+
+import { parseNick } from "./channel_nicklist.ts";
+import { IrcNick } from "./nick.ts";
+
+import numeric from "./numeric.ts";
 
 export interface TextBlock {
   id: ID;
@@ -146,7 +152,7 @@ function setFormat(acc: any, part: string): TextBlock[] {
 
 function defaultValue(merge: Partial<TextBlock>): TextBlock {
   return {
-    id: uuid(),
+    id: hash(),
     foreground: 0,
     background: 0,
     bold: false,
@@ -157,36 +163,22 @@ function defaultValue(merge: Partial<TextBlock>): TextBlock {
   } as TextBlock;
 }
 
-const timeRe = "\\d{4}-\\d{2}-\\d{2}@\\d+:\\d+:\\d+";
-const timeGroup = `^(?<TIME>${timeRe})`;
-const eventRe = "[A-Z][a-z]+";
-const eventGroup = `^(?<EVENT_TIME>${timeRe})\\s(?<EVENT_NAME>${eventRe}):`;
-const nickRe = "[^!\\s<]+![^@\\s]+@[^>\\s]+";
-const nickGroup = `(?<NICK>${nickRe})`;
-const msgRe = "(?:[>].+$)|\\s[:(].+$";
-const msgGroup = `(?<RAW>${msgRe})`;
-
-const regexp = [
-  eventGroup,
-  timeGroup,
-  nickGroup,
-  msgGroup,
-].join("|");
-
-export interface ParseLineNick {
-  nick: string;
-  ident: string;
-  hostname: string;
-}
+const regexp =
+  /^(?:@([^\s]+)\s)?(?::((?:(?:([^\s!@]+)(?:!([^\s@]+))?)@)?(\S+))\s)?((?:[a-zA-Z]+)|(?:[0-9]{3}))(?:\s([^:].*?))?(?:\s:(.*))?$/i;
 
 export interface ParseLineResultInterface {
-  createdAt: Date;
+  args: WHATEVER[];
+  id: ID;
   type: string;
-  message: TextBlock[];
-  nick: ParseLineNick;
+  message: Sentence;
+  nick: IrcNickInterface;
+  prefix: string;
   raw: string;
-  reason: TextBlock[];
-  victim: ParseLineNick;
+  reason: Sentence;
+  receivedAt: Date;
+  target: string;
+  topic: Sentence;
+  victim: string;
 }
 
 export function parse(str: string): ParseLineResultInterface {
@@ -194,57 +186,124 @@ export function parse(str: string): ParseLineResultInterface {
 
   temp.raw = str;
 
-  const matches = str.matchAll(new RegExp(regexp, "gm"));
+  const matches = str.matchAll(new RegExp(regexp, "gi"));
 
   for (const match of matches) {
-    const {
-      EVENT_TIME,
-      EVENT_NAME,
-      TIME,
-      NICK,
-      RAW,
-    } = match.groups as {
-      EVENT_TIME?: string;
-      EVENT_NAME?: string;
-      TIME?: string;
-      NICK?: string;
-      RAW?: string;
-    };
+    const ircNick = new IrcNick();
 
-    if (EVENT_TIME) {
-      temp.createdAt = new Date(EVENT_TIME as string);
+    const _tags = match[1];
+    _tags && _tags.split(";").forEach((tag) => {
+      let parts = tag.split("=");
+      let key = _lwr(parts[0]);
+      let value = parts[1];
+      switch (key) {
+        case "unrealircd.org/userhost":
+          ircNick.userhost = value;
+          break;
+        case "unrealircd.org/userip":
+          ircNick.userip = value;
+          break;
+        case "msgid":
+          temp.id = value;
+          break;
+        case "time":
+          temp.receivedAt = new Date(value);
+          break;
+      }
+    });
+
+    if (!_tags) {
+      temp.id = hash();
+      temp.receivedAt = new Date();
     }
 
-    if (EVENT_NAME) {
-      temp.type = _upr(EVENT_NAME);
+    if (match[3] && match[4] && match[5]) {
+      ircNick.nick = match[3];
+      ircNick.ident = match[4];
+      ircNick.hostname = match[5];
+      temp.nick = ircNick;
     }
 
-    if (TIME) {
-      temp.createdAt = new Date(TIME as string);
+    temp.prefix = match[2];
+    temp.type = numeric[match[6]] || match[6];
+
+    function basicArgs($match: string[]) {
+      let args = $match[7] ? $match[7].split(/\s+/) : [];
+      if ($match[8]) {
+        args = [...args, match[8]];
+      }
+      return args;
     }
 
-    if (NICK) {
-      if (temp.type === "KICK") {
-        temp.victim = temp.nick;
+    function targetArgs($match: string[]) {
+      let [target, ...args] = $match[7] ? $match[7].split(/\s+/) : [];
+      if ($match[8]) {
+        args = [...args, match[8]];
       }
 
-      const [nick, ident, hostname] = NICK.trim()
-        .replace(/[<>]/g, "")
-        .split(/[!@]/);
-      temp.nick = {
-        nick,
-        ident,
-        hostname,
-      };
+      return { target, args: args.filter(Boolean) };
     }
 
-    if (RAW) {
-      const { formatted: text } = format(RAW.replace(/^>\s|\s:/, "").trim());
-      if (temp.type === "KICK") {
-        temp.reason = text;
-      } else {
-        temp.message = text;
-      }
+    switch (temp.type) {
+      case "CAP":
+        temp.args = basicArgs(match);
+        break;
+
+      case "JOIN":
+        const { target: joinTarget, args: joinArgs } = targetArgs(match);
+        temp.target = joinTarget;
+        temp.nick!.realname = format(joinArgs[1]);
+        break;
+
+      case "KICK":
+        const { target: kickTarget, args: kickArgs } = targetArgs(match);
+        const [kickVictim, kickReason] = kickArgs;
+        temp.target = kickTarget;
+        temp.victim = kickVictim;
+        temp.reason = format(kickReason);
+        break;
+
+      case "INVITE":
+      case "MODE":
+        const { target: modeTarget, args: modeArgs } = targetArgs(match);
+        temp.target = modeTarget;
+        temp.args = modeArgs;
+        break;
+
+      case "PART":
+        const { target: partTarget, args: partArgs } = targetArgs(match);
+        temp.target = partTarget;
+        temp.reason = format(partArgs[0] || "");
+        break;
+
+      case "NOTICE":
+      case "PRIVMSG":
+        temp.target = match[7];
+        temp.message = format(match[8]);
+        break;
+
+      case "TOPIC":
+        temp.target = match[7];
+        temp.topic = format(match[8]);
+        break;
+
+      case "RPL_NAMREPLY":
+        const [, , nameReplyTarget] = match[7].split(/\s+/);
+        temp.target = nameReplyTarget;
+        temp.args = parseNick(match[8]);
+        break;
+
+      default:
+        temp.args = match[7] ? match[7].split(/\s+/) : [];
+        if (match[8]) {
+          if (!(temp.type.startsWith("RPL_") || temp.type.startsWith("ERR_"))) {
+            temp.args = [...temp.args, format(match[8])];
+          } else {
+            temp.args = [...temp.args, match[8]];
+          }
+        }
+
+        break;
     }
   }
 
