@@ -45,6 +45,26 @@ export enum GradeSymbol {
 
 // ?         ::   IRC - UI Nick Grade
 
+export interface IrcUIChannelNickInterface {
+  filter: boolean;
+  state: IrcChannelNickInterface;
+}
+
+export class IrcUIChannelNick implements IrcUIChannelNickInterface {
+  filter: boolean = false;
+
+  state!: IrcChannelNickInterface;
+
+  constructor(state: IrcChannelNickInterface) {
+    this.setState(state);
+  }
+
+  setState(state: IrcChannelNickInterface): this {
+    this.state = state;
+    return this;
+  }
+}
+
 export type IrcUIChannelNicklistGradeSymbolType =
   | IrcChannelNicklistGradeSymbolType
   | "";
