@@ -1,66 +1,59 @@
-import {
-  assertEquals,
-  assertNotEquals,
-  testdataDir,
-} from "../deno/test_mod.ts";
+import { assertEquals, testdataDir } from "../deno/test_mod.ts";
 
 import { readFile } from "../deno/fs.ts";
-import { IrcChannelNickInterface, orderNicklist } from "./channel_nicklist.ts";
+import {
+  IrcChannelNickInterface,
+  IrcUIChannelNick,
+  orderNicklist,
+  parseNick,
+} from "./channel_nicklist.ts";
+
+import { fuzzySearch } from "../shared/search.ts";
 
 Deno.test(
   "[irc/channel_nicklist/orderNicklist]: base",
   async () => {
-    const fakeNicklist: IrcChannelNickInterface[] = await readFile(
-      `${testdataDir(import.meta.url)}/nicklist.json`,
+    const [fake, expect] = await readFile(
+      `${testdataDir(import.meta.url)}/nicklist_sorted.json`,
       "json",
     );
 
-    const sorted = orderNicklist(fakeNicklist);
-    assertEquals(sorted, [
-      { modes: ["@", "~", "%", "+"], nick: { nick: "Chef de salon" } },
-      { modes: ["@", "&", "~"], nick: { nick: "PhiSyX" } },
-      { modes: ["&", "@"], nick: { nick: "Opérateur protégé" } },
-      { modes: ["@", "+"], nick: { nick: "Opérateur" } },
-      { modes: ["%", "+"], nick: { nick: "%Demi Opérateur" } },
-      { modes: ["+"], nick: { nick: "Utilisateur important" } },
-      { modes: [], nick: { nick: "Utilisateur lambda" } },
-      { modes: [], nick: { nick: "Utilisateur[absent]" } },
-      { modes: [], nick: { nick: "Utilisateur[occupee]" } },
-    ]);
+    const fakeNicklist = fake
+      .map((n: string) => parseNick(n + "!*@*")[0][0])
+      .map((cn: IrcChannelNickInterface) => new IrcUIChannelNick(cn));
+
+    const expectNicklist = expect
+      .map((n: string) => parseNick(n + "!*@*")[0][0])
+      .map((cn: IrcChannelNickInterface) => new IrcUIChannelNick(cn));
+
+    assertEquals(orderNicklist(fakeNicklist), expectNicklist);
   },
 );
 
 Deno.test(
   "[irc/channel_nicklist/orderNicklist]: filtered",
   async () => {
-    const fakeNicklist: IrcChannelNickInterface[] = await readFile(
+    const [filterBy, fake, expect] = await readFile(
       `${testdataDir(import.meta.url)}/nicklist_filtered.json`,
       "json",
     );
 
-    const sorted = orderNicklist(fakeNicklist);
-    assertEquals(sorted, [
-      { filter: true, modes: ["@", "&", "~"], nick: { nick: "PhiSyX" } },
-      { filter: true, modes: [], nick: { nick: "Utilisateur[absent]" } },
-      { filter: true, modes: [], nick: { nick: "Utilisateur[occupee]" } },
-      { modes: ["@", "~", "%", "+"], nick: { nick: "Chef de salon" } },
-      { modes: ["&", "@"], nick: { nick: "Opérateur protégé" } },
-      { modes: ["@", "+"], nick: { nick: "Opérateur" } },
-      { modes: ["%", "+"], nick: { nick: "%Demi Opérateur" } },
-      { modes: ["+"], nick: { nick: "Utilisateur important" } },
-      { modes: [], nick: { nick: "Utilisateur lambda" } },
-    ]);
+    const fakeNicklist = fake
+      .map((n: string) => parseNick(n + "!*@*")[0][0])
+      .map((cn: IrcChannelNickInterface) => {
+        const ui = new IrcUIChannelNick(cn);
+        ui.filter = fuzzySearch(filterBy, cn.nick.nick).length !== 0;
+        return ui;
+      });
 
-    assertNotEquals(sorted, [
-      { modes: ["@", "~", "%", "+"], nick: { nick: "Chef de salon" } },
-      { modes: ["@", "&", "~"], nick: { nick: "PhiSyX" } },
-      { modes: ["&", "@"], nick: { nick: "Opérateur protégé" } },
-      { modes: ["@", "+"], nick: { nick: "Opérateur" } },
-      { modes: ["%", "+"], nick: { nick: "%Demi Opérateur" } },
-      { modes: ["+"], nick: { nick: "Utilisateur important" } },
-      { modes: [], nick: { nick: "Utilisateur lambda" } },
-      { modes: [], nick: { nick: "Utilisateur[absent]" } },
-      { modes: [], nick: { nick: "Utilisateur[occupee]" } },
-    ]);
+    const expectNicklist = expect
+      .map((n: string) => parseNick(n + "!*@*")[0][0])
+      .map((cn: IrcChannelNickInterface) => {
+        const ui = new IrcUIChannelNick(cn);
+        ui.filter = fuzzySearch(filterBy, cn.nick.nick).length !== 0;
+        return ui;
+      });
+
+    assertEquals(orderNicklist(fakeNicklist), expectNicklist);
   },
 );

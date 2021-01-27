@@ -1,25 +1,24 @@
 [
-  "ura",
   [
-    "@~%+Chef de salon",
-    "@&~PhiSyX",
-    "&@Opérateur protégé",
-    "@+Opérateur",
-    "%+Demi Opérateur",
-    "+Utilisateur important",
     "Utilisateur lambda",
+    "@~%+Chef de salon",
+    "Utilisateur[occupee]",
     "Utilisateur[absent]",
-    "Utilisateur[occupee]"
+    "%+Demi Opérateur",
+    "&@Opérateur protégé",
+    "@&~PhiSyX",
+    "@+Opérateur",
+    "+Utilisateur important"
   ],
   [
-    "+Utilisateur important",
-    "Utilisateur lambda",
-    "Utilisateur[absent]",
     "@~%+Chef de salon",
     "@&~PhiSyX",
     "&@Opérateur protégé",
     "@+Opérateur",
     "%+Demi Opérateur",
+    "+Utilisateur important",
+    "Utilisateur lambda",
+    "Utilisateur[absent]",
     "Utilisateur[occupee]"
   ]
 ]

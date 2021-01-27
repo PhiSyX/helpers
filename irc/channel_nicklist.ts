@@ -122,18 +122,17 @@ export enum GradePosition {
   USER = 99,
 }
 
-export function orderNicklist(nicks: IrcChannelNickInterface[]) {
+export function orderNicklist(nicks: IrcUIChannelNickInterface[]) {
   function handleSort(
-    ircChannelNick1: IrcChannelNickInterface,
-    ircChannelNick2: IrcChannelNickInterface,
+    ircChannelNick1: IrcUIChannelNickInterface,
+    ircChannelNick2: IrcUIChannelNickInterface,
   ) {
-    // @ts-expect-error
-    const { filter: filter1, modes: modes1, nick: nick1 } = ircChannelNick1;
-    // @ts-expect-error
-    const { filter: filter2, modes: modes2, nick: nick2 } = ircChannelNick2;
+    const { filter: filter1, state: state1 } = ircChannelNick1;
 
-    let { position: position1 } = highestMode(modes1);
-    let { position: position2 } = highestMode(modes2);
+    const { filter: filter2, state: state2 } = ircChannelNick2;
+
+    let { position: position1 } = highestMode(state1.modes);
+    let { position: position2 } = highestMode(state2.modes);
 
     if (filter1) {
       position1 = GradePosition.FILTER;
@@ -145,7 +144,7 @@ export function orderNicklist(nicks: IrcChannelNickInterface[]) {
     const res = position2 - position1;
 
     if (res === 0) {
-      return compareByNick(nick1, nick2);
+      return compareByNick(state1.nick, state2.nick);
     }
 
     return position1 - position2;
@@ -245,7 +244,13 @@ export function parseNick(
     const chanNick = new IrcChannelNick();
 
     const nick = new IrcNick();
+    const modes = prefixNick(groups.NICK.trim());
+
     nick.nick = groups.NICK;
+    for (const mode of modes) {
+      nick.nick = nick.nick.replace(mode, "");
+    }
+
     nick.ident = groups.IDENT;
     nick.hostname = groups.HOSTNAME;
 
@@ -255,7 +260,7 @@ export function parseNick(
     temp = [...temp, chanNick];
   }
 
-  return chunkArray(orderNicklist(temp), 250);
+  return chunkArray(temp, 250);
 }
 
 export function prefixNick(nick: string): IrcChannelNicklistGradeSymbolType[] {
