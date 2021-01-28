@@ -1,5 +1,6 @@
 import type { ID, Nullable, WHATEVER } from "../shared/types.d.ts";
 import type { IrcNickInterface } from "./nick.ts";
+import type { IrcNumericCode, IrcNumericName } from "./numeric.ts";
 
 import { lastEntry } from "../shared/array.ts";
 import { _lwr, _upr, hash, toString } from "../shared/string.ts";
@@ -169,7 +170,7 @@ const regexp =
 export interface ParseLineResultInterface {
   args: WHATEVER[];
   id: ID;
-  type: string;
+  type: IrcNumericName | string;
   message: Sentence;
   nick: IrcNickInterface;
   prefix: string;
@@ -225,7 +226,7 @@ export function parse(str: string): ParseLineResultInterface {
     }
 
     temp.prefix = match[2];
-    temp.type = numeric[match[6]] || match[6];
+    temp.type = numeric[match[6] as IrcNumericCode] || match[6];
 
     function basicArgs($match: string[]) {
       let args = $match[7] ? $match[7].split(/\s+/) : [];
