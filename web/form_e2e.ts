@@ -1,4 +1,4 @@
-import { formData } from "./form.ts";
+import { formData } from "./form";
 
 context("Form", () => {
   beforeEach(() => {
@@ -9,9 +9,11 @@ context("Form", () => {
     expect(() => (formData("#lol"))).to.have.throw(
       `[web/form/formData]: aucun élément n'a été trouvé avec le sélecteur "#lol"`,
     );
-    expect(() => (formData(document.querySelector("#lol")))).to.have.throw(
-      `[web/form/formData]: il semble que votre argument résulte erroné.`,
-    );
+    expect(() => (formData(document?.querySelector("#lol") as HTMLFormElement)))
+      .to
+      .have.throw(
+        `[web/form/formData]: il semble que votre argument résulte erroné.`,
+      );
 
     cy.get("#field-a-1").type("coucou", { delay: 100 });
     cy.get("#field-b-1").type("comment", { delay: 100 });

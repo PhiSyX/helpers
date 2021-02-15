@@ -5,6 +5,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tests d'intégrations</title>
+  <style>
+    #printable-keyboard-is-ok {
+      min-height: 16px;
+      border: 1px solid green;
+    }
+
+    #printable-keyboard-is-ko {
+      min-height: 16px;
+      border: 1px solid red;
+    }
+  </style>
 </head>
 
 <body>
@@ -22,6 +33,13 @@
     <input id="field-c-2" type="text" name="c">
   </form>
   <!-- end test:e2e for "./form_e2e.ts" -->
+
+  <div>
+    Affiche seulement les touches qui peuvent être affiché dans un champ de texte :
+    <pre id="printable-keyboard-is-ok" tabindex="0"></pre>
+    Affiche les touches qui ne doivent pas être affiché dans un champ de texte :
+    <pre id="printable-keyboard-is-ko" tabindex="0"></pre>
+  </div>
 
 </body>
 
